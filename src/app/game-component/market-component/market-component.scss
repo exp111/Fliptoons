@@ -1,0 +1,12 @@
+@import "../../../variables";
+
+.market {
+  display: flex;
+  gap: 0.25rem;
+
+  & > * {
+    // 5 in the row
+    width: 20%;
+    border-radius: $corner-radius;
+  }
+}

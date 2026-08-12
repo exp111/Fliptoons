@@ -191,3 +191,8 @@ export const cardsSeason1Starter: Card[] = [
     count: 1
   }
 ];
+
+export const soloBlacklist = [
+  "Skunk",
+  "Pig"
+]

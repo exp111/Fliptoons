@@ -1,0 +1,7 @@
+.slots {
+  display: flex;
+
+  & > * {
+    width: 33.3%;
+  }
+}
