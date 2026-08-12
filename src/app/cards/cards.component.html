@@ -1,0 +1,14 @@
+
+<h1>Starter</h1>
+<div class="cards">
+  @for (card of cardsSeason1Starter; track card.name) {
+    <img src="/{{card.name.toLowerCase()}}.png">
+  }
+</div>
+
+<h1>Deck</h1>
+<div class="cards">
+  @for (card of cardsSeason1; track card.name) {
+    <img src="/{{card.name.toLowerCase()}}.png">
+  }
+</div>

@@ -1,0 +1,19 @@
+nav {
+  display: flex;
+  gap: 0.5rem;
+
+  & .header {
+    font-size: 1.5rem;
+    font-weight: bold;
+    flex-grow: 1;
+  }
+
+  & a {
+    text-decoration: none;
+    align-self: center;
+
+    &.active {
+      font-weight: bold;
+    }
+  }
+}

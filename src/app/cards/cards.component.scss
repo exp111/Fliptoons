@@ -1,0 +1,9 @@
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+
+  & img {
+    // 5 per row
+    width: 20%;
+  }
+}
