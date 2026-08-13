@@ -1,9 +1,10 @@
+<span>Phase: {{Phase[currentPhase()]}}</span>
 <!-- Market -->
-<span>Cards in Market Deck: {{marketDeck().length}}</span>
+<span>Cards in Market Deck: {{marketDeck().length}}, Actions left: {{marketActionsLeft()}}</span>
 <app-market-component [(slots)]="market"/>
 <!-- Playing Zone -->
 <span>Cards in Deck: {{deck().length}}, Fame: {{currentFame()}}</span>
-<button (click)="startDraw()">Draw</button>
+<button (click)="nextPhase()" [disabled]="isWorking()">Next</button>
 <div class="slots">
   @for (_ of fake_slots; track $index) {
     <app-slot-component [card]="slots()[$index]"></app-slot-component>

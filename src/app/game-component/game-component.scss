@@ -1,3 +1,8 @@
+:host {
+  display: flex;
+  flex-direction: column;
+}
+
 .slots {
   display: flex;
   flex-wrap: wrap;
