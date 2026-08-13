@@ -2,9 +2,10 @@
 <span>Cards in Market Deck: {{marketDeck().length}}</span>
 <app-market-component [(slots)]="market"/>
 <!-- Playing Zone -->
-<span>Cards in Deck: {{deck().length}}</span>
+<span>Cards in Deck: {{deck().length}}, Fame: {{currentFame()}}</span>
+<button (click)="startDraw()">Draw</button>
 <div class="slots">
-  @for (slot of slots(); track $index) {
-    <app-slot-component [card]="slot"></app-slot-component>
+  @for (_ of fake_slots; track $index) {
+    <app-slot-component [card]="slots()[$index]"></app-slot-component>
   }
 </div>
