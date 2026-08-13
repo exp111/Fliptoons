@@ -1,16 +1,21 @@
 import { Card, SpecialAbility } from './card';
 import { DragonflyCard } from './cards/dragonfly';
 import { CaterpillarCard } from './cards/caterpillar';
+import { ButterflyCard } from './cards/butterfly';
+import { DonkeyCard } from './cards/donkey';
+import { GoatCard } from './cards/goat';
+import { SheepCard } from './cards/sheep';
+import { CamelCard } from './cards/camel';
 
 export const cardsSeason1: Card[] = [
   new Card("Ostrich", 1, 1, 3),
   new Card("Eagle", 2, 4, 2, [SpecialAbility.IgnoreFlip]),
-  new Card("Donkey", 3, 1, 2),
-  new Card("Butterfly", 4, 2, 3),
+  new DonkeyCard("Donkey", 3, 1, 2),
+  new ButterflyCard("Butterfly", 4, 2, 3),
   new Card("Dog", 5, 0, 4),
-  new Card("Goat", 6, 1, 2),
-  new Card("Sheep", 7, 1, 2),
-  new Card("Camel", 8, 2, 5),
+  new GoatCard("Goat", 6, 1, 2),
+  new SheepCard("Sheep", 7, 1, 2),
+  new CamelCard("Camel", 8, 2, 5),
   new Card("Rabbit", 9, 3, 4, [SpecialAbility.IgnoreFlip]),
   new Card("Horse", 10, 4, 2),
   new Card("Snake", 11, 1, 2),

@@ -1,14 +1,13 @@
 import { Card, GameData } from '../card';
 
 export class DragonflyCard extends Card {
-  GRID_ROW_SIZE = 3;
   // left, right, above, below
   ADJACENT_OFFSETS = [-1, 1, -this.GRID_ROW_SIZE, this.GRID_ROW_SIZE];
 
   // number of adjacent unique face-up cards
   override getFame(data: GameData) {
     // find own position
-    let index = data.grid.findIndex((c) => c === this);
+    let index = this.getIndex(data);
     if (index >= 0) {
       let found: Record<string, boolean> = {};
       // check each adjacent cards
@@ -27,7 +26,6 @@ export class DragonflyCard extends Card {
       }
       return Object.keys(found).length;
     }
-    console.error('Could not find self inside grid.');
     return 0;
   }
 }
