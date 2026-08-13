@@ -24,10 +24,10 @@ export class GameComponent {
   market = signal<Card[]>(this.sortByRank(this.drawCards(this.marketDeck, 5)));
 
   deck = signal<Card[]>(this.buildPlayerDeck());
-  slots = signal<Card[]>([]);
+  grid = signal<Card[]>([]);
   currentFame = computed(() =>
-    this.slots()
-      .map((c) => c.fame)
+    this.grid()
+      .map((c) => c.getFame({market: this.market(), grid: this.grid()}))
       .reduce((a, b) => a + b, 0),
   );
   marketActionsLeft = signal(0);
@@ -41,10 +41,10 @@ export class GameComponent {
 
   private buildDeck(array: Card[]) {
     // clone cards count times
-    let deck = [];
+    let deck: Card[] = [];
     for (let card of array) {
       for (let i = 0; i < card.count; i++) {
-        deck.push({ ...card });
+        deck.push(card.clone(card));
       }
     }
     // then shuffle + filter out
@@ -100,9 +100,9 @@ export class GameComponent {
     // shuffle cards back into deck
     this.deck.update(d => shuffleArray(d));
     // repeat until slots full or deck empty
-    while (this.slots().length <= this.AMOUNT_SLOTS && this.deck().length > 0) {
+    while (this.grid().length <= this.AMOUNT_SLOTS && this.deck().length > 0) {
       let card = this.drawCard(this.deck);
-      this.slots.update((s) => [...s, card]);
+      this.grid.update((s) => [...s, card]);
       // wait
       await new Promise((resolve) => setTimeout(resolve, this.CARD_DRAW_TIME));
     }
@@ -131,8 +131,8 @@ export class GameComponent {
 
   async cleanup() {
     // collect cards back into deck
-    this.deck.update((d) => [...d, ...this.slots()]);
-    this.slots.set([]);
+    this.deck.update((d) => [...d, ...this.grid()]);
+    this.grid.set([]);
     // discard left most and right most market cards
     let left = this.market()[0];
     let right = this.market()[this.market().length - 1];

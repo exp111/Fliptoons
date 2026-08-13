@@ -7,6 +7,6 @@
 <button (click)="nextPhase()" [disabled]="isWorking()">Next</button>
 <div class="slots">
   @for (_ of fake_slots; track $index) {
-    <app-slot-component [card]="slots()[$index]"></app-slot-component>
+    <app-slot-component [card]="grid()[$index]"></app-slot-component>
   }
 </div>
