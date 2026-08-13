@@ -13,7 +13,7 @@ import { shuffleArray } from '../utils';
 })
 export class GameComponent {
   marketDeck = signal<Card[]>(this.buildMarketDeck());
-  market = signal<Card[]>(this.drawCards(this.marketDeck, 5));
+  market = signal<Card[]>(this.sortByRank(this.drawCards(this.marketDeck, 5)));
 
   deck = signal<Card[]>(this.buildPlayerDeck());
   slots = signal<(Card | undefined)[]>([
@@ -27,12 +27,16 @@ export class GameComponent {
 
   constructor() {}
 
+  private sortByRank(array: Card[]) {
+    return array.sort((a,b) => a.rank - b.rank);
+  }
+
   private buildDeck(array: Card[]) {
     // clone cards count times
     let deck = [];
     for (let card of array) {
       for (let i = 0; i < card.count; i++) {
-        deck.push({...card});
+        deck.push({ ...card });
       }
     }
     // then shuffle + filter out
@@ -53,7 +57,7 @@ export class GameComponent {
 
   drawCards(deck: WritableSignal<Card[]>, amount: number) {
     let out = deck().slice(0, amount);
-    deck.update(d => d.slice(amount));
+    deck.update((d) => d.slice(amount));
     return out;
   }
 }
