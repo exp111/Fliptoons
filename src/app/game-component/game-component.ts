@@ -12,14 +12,20 @@ import { shuffleArray } from '../utils';
   styleUrl: './game-component.scss',
 })
 export class GameComponent {
+  AMOUNT_SLOTS = 6;
+  CARD_DRAW_TIME = 500;
+  fake_slots = Array(6);
+
   marketDeck = signal<Card[]>(this.buildMarketDeck());
   market = signal<Card[]>(this.sortByRank(this.drawCards(this.marketDeck, 5)));
 
   deck = signal<Card[]>(this.buildPlayerDeck());
-  AMOUNT_SLOTS = 6;
-  fake_slots = Array(6);
   slots = signal<Card[]>([]);
-  currentFame = computed(() => this.slots().map(c => c.fame).reduce((a, b) => a + b, 0));
+  currentFame = computed(() =>
+    this.slots()
+      .map((c) => c.fame)
+      .reduce((a, b) => a + b, 0),
+  );
 
   constructor() {}
 
@@ -57,15 +63,16 @@ export class GameComponent {
     return out;
   }
 
-  startDraw() {
-    // put cards back into deck, clear slots
-    this.deck.update(d => [...d, ...this.slots()]);
+  async startDraw() {
+    // shuffle cards back into deck, clear slots
+    this.deck.update((d) => shuffleArray([...d, ...this.slots()]));
     this.slots.set([]);
     // repeat until slots full or deck empty
     while (this.slots().length <= this.AMOUNT_SLOTS && this.deck().length > 0) {
       let card = this.drawCards(this.deck, 1)[0];
-      this.slots.update(s => [...s, card]);
+      this.slots.update((s) => [...s, card]);
       //TODO: wait
+      await new Promise((resolve) => setTimeout(resolve, this.CARD_DRAW_TIME));
     }
   }
 }
