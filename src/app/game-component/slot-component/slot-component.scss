@@ -1,3 +1,13 @@
+@use "../../../variables";
+
 .slot {
+  margin: 0.5rem;
   border: 1px dashed black;
+  height: calc(33.3vw*1.15);
+  border-radius: variables.$corner-radius;
+  overflow: hidden;
+
+  & > img {
+    width: 100%;
+  }
 }

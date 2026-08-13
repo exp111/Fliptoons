@@ -1,5 +1,6 @@
 .slots {
   display: flex;
+  flex-wrap: wrap;
 
   & > * {
     width: 33.3%;

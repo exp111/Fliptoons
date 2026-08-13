@@ -2,7 +2,7 @@
 <span>Cards in Market Deck: {{marketDeck().length}}</span>
 <app-market-component [(slots)]="market"/>
 <!-- Playing Zone -->
-<span>Cards in Deck</span>
+<span>Cards in Deck: {{deck().length}}</span>
 <div class="slots">
   @for (slot of slots(); track $index) {
     <app-slot-component [card]="slot"></app-slot-component>

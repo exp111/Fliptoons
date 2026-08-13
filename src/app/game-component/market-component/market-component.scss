@@ -1,4 +1,4 @@
-@import "../../../variables";
+@use "../../../variables";
 
 .market {
   display: flex;
@@ -7,6 +7,6 @@
   & > * {
     // 5 in the row
     width: 20%;
-    border-radius: $corner-radius;
+    border-radius: variables.$corner-radius;
   }
 }

@@ -17,7 +17,7 @@ export class GameComponent {
 
   deck = signal<Card[]>(this.buildPlayerDeck());
   slots = signal<(Card | undefined)[]>([
-    undefined,
+    ...this.drawCards(this.deck, 1), //TODO: remove
     undefined,
     undefined,
     undefined,
@@ -28,8 +28,16 @@ export class GameComponent {
   constructor() {}
 
   private buildDeck(array: Card[]) {
+    // clone cards count times
+    let deck = [];
+    for (let card of array) {
+      for (let i = 0; i < card.count; i++) {
+        deck.push({...card});
+      }
+    }
+    // then shuffle + filter out
     return shuffleArray(
-      [...array]
+      [...deck]
         // filter out cards removed in solo
         .filter((c) => !soloBlacklist.includes(c.name)),
     );
