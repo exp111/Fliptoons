@@ -6,13 +6,14 @@ import { DonkeyCard } from './cards/donkey';
 import { GoatCard } from './cards/goat';
 import { SheepCard } from './cards/sheep';
 import { CamelCard } from './cards/camel';
+import { DogCard } from './cards/dog';
 
 export const cardsSeason1: Card[] = [
   new Card("Ostrich", 1, 1, 3),
   new Card("Eagle", 2, 4, 2, [SpecialAbility.IgnoreFlip]),
   new DonkeyCard("Donkey", 3, 1, 2),
   new ButterflyCard("Butterfly", 4, 2, 3),
-  new Card("Dog", 5, 0, 4),
+  new DogCard("Dog", 5, 0, 4),
   new GoatCard("Goat", 6, 1, 2),
   new SheepCard("Sheep", 7, 1, 2),
   new CamelCard("Camel", 8, 2, 5),
@@ -37,7 +38,7 @@ export const cardsSeason1: Card[] = [
 
 export const cardsSeason1Starter: Card[] = [
   new Card("Bee", 0, 1, 1),
-  new CaterpillarCard("Caterpillar", 0, 0, 2),
+  new CaterpillarCard("Caterpillar", 0, 0, 3), // 3 in solo
   new Card("Skunk", 0, 0, 1),
   new Card("Snail", 0, 2, 1),
   new DragonflyCard("Dragonfly", 0, 0, 1),

@@ -14,6 +14,7 @@ import {Phase} from '../../model/phase';
 })
 export class GameComponent {
   AMOUNT_SLOTS = 6;
+  MARKET_SIZE = 5;
   CARD_DRAW_TIME = 500;
   MARKET_ACTIONS = 2;
   fake_slots = Array(6);
@@ -21,19 +22,19 @@ export class GameComponent {
   currentPhase = signal<Phase>(Phase.FLIP);
   marketDeck = signal<Card[]>(this.buildMarketDeck());
   marketDiscard = signal<Card[]>([]);
-  market = signal<Card[]>(this.sortByRank(this.drawCards(this.marketDeck, 5)));
+  market = signal<Card[]>(this.sortByRank(this.drawCards(this.marketDeck, this.MARKET_SIZE)));
 
   deck = signal<Card[]>(this.buildPlayerDeck());
   grid = signal<Card[]>([]);
+  //TODO: instead of always computing, only compute on market start
   currentFame = computed(() =>
     this.grid()
-      .map((c) => c.getFame({market: this.market(), grid: this.grid()}))
+      .map((c) => c.getFame({ market: this.market(), grid: this.grid() }))
       .reduce((a, b) => a + b, 0),
   );
   marketActionsLeft = signal(0);
+  canHire = computed(() => this.marketActionsLeft() > 0);
   isWorking = signal(false);
-
-  constructor() {}
 
   private sortByRank(array: Card[]) {
     return array.sort((a, b) => a.rank - b.rank);
@@ -60,6 +61,7 @@ export class GameComponent {
   }
 
   buildMarketDeck() {
+    //TODO: remove N cards
     return this.buildDeck(cardsSeason1);
   }
 
@@ -73,6 +75,34 @@ export class GameComponent {
     return this.drawCards(deck, 1)[0];
   }
 
+  onHire(card: Card) {
+    // remove card from market
+    this.market.update((m) => m.filter((c) => c !== card));
+    // add to deck
+    this.deck.update((d) => [...d, card]);
+    //TODO: take money
+    // use action
+    this.marketActionsLeft.update((a) => a - 1);
+  }
+
+  refillMarket() {
+    let missingCards = this.MARKET_SIZE - this.market().length;
+    if (missingCards == 0) {
+      return true;
+    }
+    // refill
+    let cards = this.drawCards(this.marketDeck, missingCards);
+    // if market deck is empty, game is lost
+    if (cards.length < missingCards) {
+      this.currentPhase.set(Phase.LOST);
+      return false;
+    }
+    // add to market + sort
+    this.market.update((m) => this.sortByRank([...this.market(), ...cards]));
+    return true;
+  }
+
+  // state machine
   async nextPhase() {
     this.isWorking.set(true);
     switch (this.currentPhase()) {
@@ -98,9 +128,9 @@ export class GameComponent {
 
   async flipCards() {
     // shuffle cards back into deck
-    this.deck.update(d => shuffleArray(d));
+    this.deck.update((d) => shuffleArray(d));
     // repeat until slots full or deck empty
-    while (this.grid().length <= this.AMOUNT_SLOTS && this.deck().length > 0) {
+    while (this.grid().length < this.AMOUNT_SLOTS && this.deck().length > 0) {
       let card = this.drawCard(this.deck);
       this.grid.update((s) => [...s, card]);
       // wait
@@ -121,9 +151,12 @@ export class GameComponent {
 
   async marketPhase() {
     if (this.marketActionsLeft() > 0) {
-      if (!confirm("You still have market actions left. Do you want to continue to cleanup?")) {
+      if (!confirm('You still have market actions left. Do you want to continue to cleanup?')) {
         return;
       }
+    }
+    if (!this.refillMarket()) {
+      return;
     }
     this.marketActionsLeft.set(0);
     this.currentPhase.set(Phase.CLEANUP);
@@ -136,15 +169,10 @@ export class GameComponent {
     // discard left most and right most market cards
     let left = this.market()[0];
     let right = this.market()[this.market().length - 1];
-    this.marketDiscard.update(d => [...d, left, right]);
-    // refill
-    let cards = this.drawCards(this.marketDeck, 2);
-    // if market deck is empty, game is lost
-    if (cards.length < 2) {
-      this.currentPhase.set(Phase.LOST);
+    this.marketDiscard.update((d) => [...d, left, right]);
+    if (!this.refillMarket()) {
       return;
     }
-    this.marketDeck.update(m => [...m, ...cards]);
     this.currentPhase.set(Phase.FLIP);
   }
 

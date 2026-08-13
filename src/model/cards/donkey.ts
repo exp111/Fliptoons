@@ -4,7 +4,7 @@ import { Phase } from '../phase';
 export class DonkeyCard extends Card {
   isInLowerRow(data: GameData) {
     let index = this.getIndex(data);
-    return index >= 0 && index < this.GRID_ROW_SIZE;
+    return index >= this.GRID_ROW_SIZE && index < data.grid.length;
   }
 
   override getFame(data: GameData): number {

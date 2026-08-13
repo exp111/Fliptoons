@@ -7,6 +7,14 @@
   & > * {
     // 5 in the row
     width: 20%;
+    border: 1px dashed black;
     border-radius: variables.$corner-radius;
+
+    &.clickable {
+      &:hover {
+        outline: 1px solid red;
+        cursor: pointer;
+      }
+    }
   }
 }

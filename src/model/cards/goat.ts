@@ -3,7 +3,7 @@ import { Card, GameData } from '../card';
 export class GoatCard extends Card {
   isInUpperRow(data: GameData) {
     let index = this.getIndex(data);
-    return index >= this.GRID_ROW_SIZE && index < data.grid.length;
+    return index >= 0 && index < this.GRID_ROW_SIZE;
   }
 
   override getFame(data: GameData): number {

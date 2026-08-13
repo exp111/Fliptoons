@@ -1,5 +1,5 @@
 <div class="market">
   @for (slot of slots(); track $index) {
-    <img src="{{slot.name.toLowerCase()}}.png">
+    <img src="{{slot.name.toLowerCase()}}.png" [class.clickable]="canHire()" (click)="hireCard(slot)">
   }
 </div>

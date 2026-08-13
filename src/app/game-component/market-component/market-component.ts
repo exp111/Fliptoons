@@ -1,4 +1,4 @@
-import { Component, input, model, signal } from '@angular/core';
+import { Component, computed, input, model, output, signal } from '@angular/core';
 import { Card } from '../../../model/card';
 
 @Component({
@@ -9,4 +9,15 @@ import { Card } from '../../../model/card';
 })
 export class MarketComponent {
   slots = model<Card[]>();
+  hireable = input();
+  //TODO: check if fame is enough etc
+  canHire = computed(() => this.hireable());
+  hire = output<Card>();
+
+  hireCard(card: Card) {
+    if (!this.hireable()) {
+      return;
+    }
+    this.hire.emit(card);
+  }
 }
