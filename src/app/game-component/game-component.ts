@@ -1,5 +1,5 @@
 import { Component, computed, signal, WritableSignal } from '@angular/core';
-import { MarketComponent } from './market-component/market-component';
+import {HireEvent, MarketComponent } from './market-component/market-component';
 import { SlotComponent } from './slot-component/slot-component';
 import { Card } from '../../model/card';
 import { cardsSeason1, cardsSeason1Starter, soloBlacklist } from '../../model/data';
@@ -26,12 +26,8 @@ export class GameComponent {
 
   deck = signal<Card[]>(this.buildPlayerDeck());
   grid = signal<Card[]>([]);
-  //TODO: instead of always computing, only compute on market start
-  currentFame = computed(() =>
-    this.grid()
-      .map((c) => c.getFame({ market: this.market(), grid: this.grid() }))
-      .reduce((a, b) => a + b, 0),
-  );
+
+  currentFame = signal(0);
   marketActionsLeft = signal(0);
   canHire = computed(() => this.marketActionsLeft() > 0);
   isWorking = signal(false);
@@ -75,12 +71,13 @@ export class GameComponent {
     return this.drawCards(deck, 1)[0];
   }
 
-  onHire(card: Card) {
+  onHire(e: HireEvent) {
     // remove card from market
-    this.market.update((m) => m.filter((c) => c !== card));
+    this.market.update((m) => m.filter((c) => c !== e.card));
     // add to deck
-    this.deck.update((d) => [...d, card]);
+    this.deck.update((d) => [...d, e.card]);
     //TODO: take money
+    this.currentFame.update((f) => f - e.price);
     // use action
     this.marketActionsLeft.update((a) => a - 1);
   }
@@ -100,6 +97,14 @@ export class GameComponent {
     // add to market + sort
     this.market.update((m) => this.sortByRank([...this.market(), ...cards]));
     return true;
+  }
+
+  calculateFame() {
+    this.currentFame.set(
+      this.grid()
+        .map((c) => c.getFame({ market: this.market(), grid: this.grid() }))
+        .reduce((a, b) => a + b, 0),
+    );
   }
 
   // state machine
@@ -133,6 +138,7 @@ export class GameComponent {
     while (this.grid().length < this.AMOUNT_SLOTS && this.deck().length > 0) {
       let card = this.drawCard(this.deck);
       this.grid.update((s) => [...s, card]);
+      this.calculateFame();
       // wait
       await new Promise((resolve) => setTimeout(resolve, this.CARD_DRAW_TIME));
     }

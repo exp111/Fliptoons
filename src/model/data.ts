@@ -8,6 +8,7 @@ import { SheepCard } from './cards/sheep';
 import { CamelCard } from './cards/camel';
 import { DogCard } from './cards/dog';
 
+export const prices = [3, 4, 7, 10, 15];
 export const cardsSeason1: Card[] = [
   new Card("Ostrich", 1, 1, 3),
   new Card("Eagle", 2, 4, 2, [SpecialAbility.IgnoreFlip]),

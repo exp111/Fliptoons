@@ -1,5 +1,12 @@
 <div class="market">
+  <div class="prices">
+    @for (price of prices; track $index) {
+      <span class="price" [class.unavailable]="prices[$index] > this.fame()">{{price}}</span>
+    }
+  </div>
+  <div class="slots">
   @for (slot of slots(); track $index) {
-    <img src="{{slot.name.toLowerCase()}}.png" [class.clickable]="canHire()" (click)="hireCard(slot)">
+    <img src="{{slot.name.toLowerCase()}}.png" [class.clickable]="hireable() && prices[$index] <= this.fame()" (click)="hireCard(slot)">
   }
+  </div>
 </div>

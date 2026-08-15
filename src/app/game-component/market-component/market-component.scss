@@ -2,11 +2,31 @@
 
 .market {
   display: flex;
-  gap: 0.25rem;
+  flex-direction: column;
 
-  & > * {
-    // 5 in the row
-    width: 20%;
+  .prices, .slots {
+    display: flex;
+    gap: 0.25rem;
+
+    & > * {
+      // 5 in the row
+      width: calc(20% - 0.5rem);
+    }
+  }
+
+  // prices
+  .prices > * {
+    text-align: center;
+    //TODO: fix this being needed to have same size as cards
+    border: 1px solid transparent;
+
+    &.unavailable {
+      color: red;
+    }
+  }
+
+  // cards in market
+  .slots > * {
     border: 1px dashed black;
     border-radius: variables.$corner-radius;
 

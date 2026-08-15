@@ -1,7 +1,7 @@
 <span>Phase: {{Phase[currentPhase()]}}</span>
 <!-- Market -->
 <span>Cards in Market Deck: {{marketDeck().length}}, Actions left: {{marketActionsLeft()}}</span>
-<app-market-component [(slots)]="market" [hireable]="canHire()" (hire)="onHire($event)"/>
+<app-market-component [(slots)]="market" [hireable]="canHire()" [fame]="currentFame()" (hire)="onHire($event)"/>
 <!-- Playing Zone -->
 <span>Cards in Deck: {{deck().length}}, Fame: {{currentFame()}}</span>
 <button (click)="nextPhase()" [disabled]="isWorking()">Next</button>
