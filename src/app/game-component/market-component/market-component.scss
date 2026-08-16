@@ -19,6 +19,7 @@
     text-align: center;
     //TODO: fix this being needed to have same size as cards
     border: 1px solid transparent;
+    padding: variables.$slot-padding;
 
     &.unavailable {
       color: red;
@@ -29,6 +30,7 @@
   .slots > * {
     border: 1px dashed black;
     border-radius: variables.$corner-radius;
+    padding: variables.$slot-padding;
 
     &.clickable {
       &:hover {
