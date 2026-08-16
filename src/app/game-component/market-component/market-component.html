@@ -5,9 +5,9 @@
     }
   </div>
   <div class="slots">
-    <!-- TODO: use slots for cards? -->
+    <!-- TODO: use slot comp for cards? -->
     @for (slot of slots(); track $index) {
-      <img src="{{slot.name.toLowerCase()}}.png" [class.clickable]="hireable() && prices[$index] <= this.fame()" (click)="hireCard(slot)">
+      <img [src]="slot.getImg()" [class.clickable]="hireable() && prices[$index] <= this.fame()" (click)="hireCard(slot)">
     }
   </div>
 </div>

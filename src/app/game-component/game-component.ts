@@ -1,10 +1,11 @@
 import { Component, computed, signal, WritableSignal } from '@angular/core';
-import {HireEvent, MarketComponent } from './market-component/market-component';
+import { HireEvent, MarketComponent } from './market-component/market-component';
 import { DismissEvent, SlotComponent } from './slot-component/slot-component';
 import { Card } from '../../model/card';
 import { cardsSeason1, cardsSeason1Starter, soloBlacklist } from '../../model/data';
 import { shuffleArray } from '../utils';
-import {Phase} from '../../model/phase';
+import { Phase } from '../../model/phase';
+import { Slot } from '../../model/slot';
 
 @Component({
   selector: 'app-game-component',
@@ -17,7 +18,6 @@ export class GameComponent {
   MARKET_SIZE = 5;
   CARD_DRAW_TIME = 500;
   MARKET_ACTIONS = 2;
-  fake_slots = Array(6);
 
   currentPhase = signal<Phase>(Phase.FLIP);
   marketDeck = signal<Card[]>(this.buildMarketDeck());
@@ -26,7 +26,7 @@ export class GameComponent {
 
   deck = signal<Card[]>(this.buildPlayerDeck());
   dismissed = signal<Card[]>([]);
-  grid = signal<Card[]>([]);
+  grid = signal<Slot[]>(this.buildGrid());
 
   currentFame = signal(0);
   marketActionsLeft = signal(0);
@@ -35,6 +35,14 @@ export class GameComponent {
 
   private sortByRank(array: Card[]) {
     return array.sort((a, b) => a.rank - b.rank);
+  }
+
+  private buildGrid() {
+    let arr = [];
+    for (let i = 0; i < this.AMOUNT_SLOTS; i++) {
+      arr.push(new Slot());
+    }
+    return arr;
   }
 
   private buildDeck(array: Card[]) {
@@ -85,7 +93,7 @@ export class GameComponent {
 
   onDismiss(e: DismissEvent) {
     // remove card from grid
-    this.grid.update((g) => g.filter((c) => c !== e.card));
+    e.slot.removeCard(e.card);
     // add to dismiss pile
     this.dismissed.update((d) => [...d, e.card]);
     // take money
@@ -114,7 +122,9 @@ export class GameComponent {
   calculateFame() {
     this.currentFame.set(
       this.grid()
-        .map((c) => c.getFame({ market: this.market(), grid: this.grid(), dismissed: this.dismissed() }))
+        .map((c) =>
+          c.getFame({ market: this.market(), grid: this.grid(), dismissed: this.dismissed() }),
+        )
         .reduce((a, b) => a + b, 0),
     );
   }
@@ -146,10 +156,14 @@ export class GameComponent {
   async flipCards() {
     // shuffle cards back into deck
     this.deck.update((d) => shuffleArray(d));
-    // repeat until slots full or deck empty
-    while (this.grid().length < this.AMOUNT_SLOTS && this.deck().length > 0) {
+    // fill slots
+    for (let slot of this.grid()) {
+      // out of cards
+      if (this.deck().length == 0) {
+        break;
+      }
       let card = this.drawCard(this.deck);
-      this.grid.update((s) => [...s, card]);
+      slot.addCard(card);
       this.calculateFame();
       // wait
       await new Promise((resolve) => setTimeout(resolve, this.CARD_DRAW_TIME));
@@ -182,8 +196,10 @@ export class GameComponent {
 
   async cleanup() {
     // collect cards back into deck
-    this.deck.update((d) => [...d, ...this.grid()]);
-    this.grid.set([]);
+    for (let slot of this.grid()) {
+      let cards = slot.cleanup();
+      this.deck.update((d) => [...d, ...cards]);
+    }
     // discard left most and right most market cards
     let left = this.market()[0];
     let right = this.market()[this.market().length - 1];

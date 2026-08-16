@@ -6,7 +6,7 @@
 <span>Cards in Deck: {{deck().length}}, Dismissed: {{dismissed().length}}, Fame: {{currentFame()}}</span>
 <button (click)="nextPhase()" [disabled]="isWorking()">Next</button>
 <div class="slots">
-  @for (_ of fake_slots; track $index) {
-    <app-slot-component [card]="grid()[$index]" [dismissable]="canHireOrDismiss()" [fame]="currentFame()" (dismiss)="onDismiss($event)"></app-slot-component>
+  @for (slot of grid(); track $index) {
+    <app-slot-component [slot]="slot" [dismissable]="canHireOrDismiss()" [fame]="currentFame()" (dismiss)="onDismiss($event)"></app-slot-component>
   }
 </div>

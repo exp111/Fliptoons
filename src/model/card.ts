@@ -1,4 +1,5 @@
 import { Phase } from './phase';
+import { Slot } from './slot';
 
 export enum SpecialAbility {
   NoDismiss,
@@ -7,7 +8,7 @@ export enum SpecialAbility {
 
 export interface GameData {
   market: Card[];
-  grid: Card[];
+  grid: Slot[];
   dismissed: Card[];
 }
 
@@ -45,7 +46,7 @@ export class Card {
   }
 
   getIndex(data: GameData) {
-    let index = data.grid.findIndex((c) => c === this);
+    let index = data.grid.findIndex((c) => c.cards.some(c => c.card === this));
     if (index < 0) {
       console.error(`Could not find card ${this.name} in grid.`);
     }
@@ -63,13 +64,18 @@ export class Card {
         if (i < 0 || i >= data.grid.length) {
           continue;
         }
-        let card = data.grid[i];
-        cards.push(card);
+        let slot = data.grid[i];
+        // all cards in slot are adjacent
+        cards.push(...slot.cards.map(s => s.card));
       }
       return cards;
     }
     console.error(`Could not find self (${this.name}) in grid.`);
     return [];
+  }
+
+  getImg() {
+    return `${this.name.toLowerCase()}.png`;
   }
 
   getFame(data: GameData) {
