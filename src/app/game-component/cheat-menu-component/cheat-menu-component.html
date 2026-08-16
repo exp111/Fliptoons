@@ -1,4 +1,7 @@
 <button command="show-modal" commandfor="add-card-dialog">Add Card</button>
+<button command="show-modal" commandfor="add-card-market-dialog">Add Card to Market</button>
+<button (click)="addFame()">Add Fame</button>
+<!-- Dialogs -->
 <dialog id="add-card-dialog" #addCardDialog>
   <select #addCardSelect>
     <option disabled>Select card</option>
@@ -15,4 +18,23 @@
   </select>
   <button (click)="addCard(addCardDialog, addCardSelect.value)">Add Card</button>
   <button commandfor="add-card-dialog" command="close">Close</button>
+</dialog>
+
+<dialog id="add-card-market-dialog" #addCardMarketDialog>
+  <input #addCardMarketNumber type="number" min="1" max="5" value="1" placeholder="Slot">
+  <select #addCardMarketSelect>
+    <option disabled>Select card</option>
+    <optgroup label="Season 1 Starter">
+      @for (card of cardsSeason1Starter; track card.name) {
+        <option [value]="card.name">{{card.name}}</option>
+      }
+    </optgroup>
+    <optgroup label="Season 1">
+      @for (card of cardsSeason1; track card.name) {
+        <option [value]="card.name">{{card.name}}</option>
+      }
+    </optgroup>
+  </select>
+  <button (click)="addCardToMarket(addCardMarketDialog, addCardMarketNumber.value, addCardMarketSelect.value)">Add Card</button>
+  <button commandfor="add-card-market-dialog" command="close">Close</button>
 </dialog>

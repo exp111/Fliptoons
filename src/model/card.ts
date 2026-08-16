@@ -11,6 +11,9 @@ export interface GameData {
   market: Card[];
   grid: Slot[];
   dismissed: Card[];
+  // methods
+  addMarketAction: () => void;
+  addFame: (fame: number) => void;
 }
 
 export class Card {

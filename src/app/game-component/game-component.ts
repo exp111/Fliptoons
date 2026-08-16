@@ -42,6 +42,9 @@ export class GameComponent {
     grid: this.grid(),
     dismissed: this.dismissed(),
     playedCards: this.playedCards(),
+    // methods
+    addMarketAction: () => this.marketActionsLeft.update(a => a + 1),
+    addFame: (fame: number) => this.currentFame.update(f => f + fame)
   }));
 
   private sortByRank(array: Card[]) {
