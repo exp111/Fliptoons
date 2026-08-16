@@ -250,6 +250,7 @@ export class GameComponent {
     // discard left most and right most market cards
     let left = this.market()[0];
     let right = this.market()[this.market().length - 1];
+    this.market.update(m => m.filter((c, i) => i > 0 && i < m.length - 1));
     this.marketDiscard.update((d) => [...d, left, right]);
     if (!this.refillMarket()) {
       return;
