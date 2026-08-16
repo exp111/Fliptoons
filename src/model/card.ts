@@ -8,31 +8,32 @@ export enum SpecialAbility {
 export interface GameData {
   market: Card[];
   grid: Card[];
+  dismissed: Card[];
 }
 
 export class Card {
   GRID_ROW_SIZE = 3;
   DISMISS_COST = 5;
-  
+
   name: string;
   // 1-25
   rank: number;
   fame: number;
   count: number;
-  specialAbility?: SpecialAbility[];
+  specialAbilities?: SpecialAbility[];
 
   constructor(
     name: string,
     rank: number,
     fame: number,
     count: number,
-    specialAbility?: SpecialAbility[],
+    specialAbilities?: SpecialAbility[],
   ) {
     this.name = name;
     this.rank = rank;
     this.fame = fame;
     this.count = count;
-    this.specialAbility = specialAbility;
+    this.specialAbilities = specialAbilities;
   }
 
   //TODO: there must be a better way...
@@ -43,8 +44,7 @@ export class Card {
       card.rank,
       card.fame,
       card.count,
-      card.fame,
-      card.specialAbility,
+      card.specialAbilities,
     );
   }
 
@@ -62,6 +62,10 @@ export class Card {
 
   getDismissCost() {
     return this.DISMISS_COST;
+  }
+
+  canGetDismissed() {
+    return !this.specialAbilities?.includes(SpecialAbility.NoDismiss);
   }
 
   // Events

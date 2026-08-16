@@ -1,12 +1,12 @@
 <span>Phase: {{Phase[currentPhase()]}}</span>
 <!-- Market -->
 <span>Cards in Market Deck: {{marketDeck().length}}, Actions left: {{marketActionsLeft()}}</span>
-<app-market-component [(slots)]="market" [hireable]="canHire()" [fame]="currentFame()" (hire)="onHire($event)"/>
+<app-market-component [(slots)]="market" [hireable]="canHireOrDismiss()" [fame]="currentFame()" (hire)="onHire($event)"/>
 <!-- Playing Zone -->
-<span>Cards in Deck: {{deck().length}}, Fame: {{currentFame()}}</span>
+<span>Cards in Deck: {{deck().length}}, Dismissed: {{dismissed().length}}, Fame: {{currentFame()}}</span>
 <button (click)="nextPhase()" [disabled]="isWorking()">Next</button>
 <div class="slots">
   @for (_ of fake_slots; track $index) {
-    <app-slot-component [card]="grid()[$index]"></app-slot-component>
+    <app-slot-component [card]="grid()[$index]" [dismissable]="canHireOrDismiss()" [fame]="currentFame()" (dismiss)="onDismiss($event)"></app-slot-component>
   }
 </div>

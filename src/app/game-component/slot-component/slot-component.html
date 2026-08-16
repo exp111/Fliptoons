@@ -1,4 +1,4 @@
-<div class="slot">
+<div class="slot" [class.clickable]="canGetDismissed()" (click)="dismissCard()">
   @if (card()) {
     <img src="{{card()!.name.toLowerCase()}}.png">
   }

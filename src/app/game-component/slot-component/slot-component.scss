@@ -10,4 +10,11 @@
   & > img {
     width: 100%;
   }
+
+  &.clickable {
+    &:hover {
+      outline: 1px solid red;
+      cursor: pointer;
+    }
+  }
 }

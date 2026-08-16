@@ -1,6 +1,6 @@
 import { Component, computed, signal, WritableSignal } from '@angular/core';
 import {HireEvent, MarketComponent } from './market-component/market-component';
-import { SlotComponent } from './slot-component/slot-component';
+import { DismissEvent, SlotComponent } from './slot-component/slot-component';
 import { Card } from '../../model/card';
 import { cardsSeason1, cardsSeason1Starter, soloBlacklist } from '../../model/data';
 import { shuffleArray } from '../utils';
@@ -25,11 +25,12 @@ export class GameComponent {
   market = signal<Card[]>(this.sortByRank(this.drawCards(this.marketDeck, this.MARKET_SIZE)));
 
   deck = signal<Card[]>(this.buildPlayerDeck());
+  dismissed = signal<Card[]>([]);
   grid = signal<Card[]>([]);
 
   currentFame = signal(0);
   marketActionsLeft = signal(0);
-  canHire = computed(() => this.marketActionsLeft() > 0);
+  canHireOrDismiss = computed(() => this.marketActionsLeft() > 0);
   isWorking = signal(false);
 
   private sortByRank(array: Card[]) {
@@ -57,7 +58,7 @@ export class GameComponent {
   }
 
   buildMarketDeck() {
-    //TODO: remove N cards
+    //TODO: remove N cards for solo
     return this.buildDeck(cardsSeason1);
   }
 
@@ -76,10 +77,21 @@ export class GameComponent {
     this.market.update((m) => m.filter((c) => c !== e.card));
     // add to deck
     this.deck.update((d) => [...d, e.card]);
-    //TODO: take money
+    // take money
     this.currentFame.update((f) => f - e.price);
     // use action
     this.marketActionsLeft.update((a) => a - 1);
+  }
+
+  onDismiss(e: DismissEvent) {
+    // remove card from grid
+    this.grid.update((g) => g.filter((c) => c !== e.card));
+    // add to dismiss pile
+    this.dismissed.update((d) => [...d, e.card]);
+    // take money
+    this.currentFame.update((f) => f - e.cost);
+    // use action
+    this.marketActionsLeft.update((f) => f - 1);
   }
 
   refillMarket() {
@@ -102,7 +114,7 @@ export class GameComponent {
   calculateFame() {
     this.currentFame.set(
       this.grid()
-        .map((c) => c.getFame({ market: this.market(), grid: this.grid() }))
+        .map((c) => c.getFame({ market: this.market(), grid: this.grid(), dismissed: this.dismissed() }))
         .reduce((a, b) => a + b, 0),
     );
   }
