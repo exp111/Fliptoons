@@ -179,6 +179,12 @@ export class GameComponent {
       case Phase.CLEANUP:
         await this.cleanup();
         break;
+      case Phase.WON:
+        alert("You won!");
+        break;
+      case Phase.LOST:
+        alert("You lost!");
+        break;
       default:
         console.error(`Unknown phase: ${this.currentPhase()}. Resetting.`);
         this.changePhase(Phase.FLIP);
