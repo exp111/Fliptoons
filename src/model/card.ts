@@ -46,7 +46,7 @@ export class Card {
     return new this.constructor(this.name, this.rank, this.fame, this.count, this.specialAbilities);
   }
 
-  getIndex(data: GameData) {
+  getSlotIndex(data: GameData) {
     let index = data.grid.findIndex((c) => c.cards().some(c => c.card === this));
     if (index < 0) {
       console.error(`Could not find card ${this.name} in grid.`);
@@ -54,8 +54,13 @@ export class Card {
     return index;
   }
 
+  getSlot(data: GameData) {
+    let index = this.getSlotIndex(data);
+    return data.grid[index] ?? null;
+  }
+
   getAdjacentCards(data: GameData) {
-    let index = this.getIndex(data);
+    let index = this.getSlotIndex(data);
     if (index >= 0) {
       let cards = [];
       // check each adjacent cards
