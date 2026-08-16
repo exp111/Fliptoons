@@ -1,7 +1,7 @@
 import { Component, computed, signal, WritableSignal } from '@angular/core';
 import { HireEvent, MarketComponent } from './market-component/market-component';
 import { DismissEvent, SlotComponent } from './slot-component/slot-component';
-import { Card } from '../../model/card';
+import { Card, GameData } from '../../model/card';
 import { cardsSeason1, cardsSeason1Starter, soloBlacklist } from '../../model/data';
 import { shuffleArray } from '../utils';
 import { Phase } from '../../model/phase';
@@ -32,6 +32,12 @@ export class GameComponent {
   marketActionsLeft = signal(0);
   canHireOrDismiss = computed(() => this.marketActionsLeft() > 0);
   isWorking = signal(false);
+
+  gameData = computed<GameData>(() => ({
+    market: this.market(),
+    grid: this.grid(),
+    dismissed: this.dismissed()
+  }));
 
   private sortByRank(array: Card[]) {
     return array.sort((a, b) => a.rank - b.rank);
@@ -89,6 +95,8 @@ export class GameComponent {
     this.currentFame.update((f) => f - e.price);
     // use action
     this.marketActionsLeft.update((a) => a - 1);
+    // trigger event
+    e.card.onHire(this.gameData());
   }
 
   onDismiss(e: DismissEvent) {
@@ -123,7 +131,7 @@ export class GameComponent {
     this.currentFame.set(
       this.grid()
         .map((c) =>
-          c.getFame({ market: this.market(), grid: this.grid(), dismissed: this.dismissed() }),
+          c.getFame(this.gameData()),
         )
         .reduce((a, b) => a + b, 0),
     );
@@ -163,6 +171,7 @@ export class GameComponent {
         break;
       }
       let card = this.drawCard(this.deck);
+      //TODO: this doesnt trigger a rerender because it doesnt update the signal
       slot.addCard(card);
       this.calculateFame();
       // wait

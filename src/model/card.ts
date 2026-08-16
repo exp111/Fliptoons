@@ -91,11 +91,14 @@ export class Card {
   }
 
   // Events
-  onHire() {
-    //TODO: trigger
+  onHire(data: GameData) {
   }
 
   onPhaseChange(data: GameData, previous: Phase, next: Phase) {
+    //TODO: trigger
+  }
+
+  onCardPlayed(data: GameData, card: Card) {
     //TODO: trigger
   }
 }
