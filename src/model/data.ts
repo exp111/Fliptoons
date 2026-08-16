@@ -10,10 +10,11 @@ import { DogCard } from './cards/dog';
 import { TigerCard } from './cards/tiger';
 import { RoosterCard } from './cards/rooster';
 import { LionCard } from './cards/lion';
+import { OstrichCard } from './cards/ostrich';
 
 export const prices = [3, 4, 7, 10, 15];
 export const cardsSeason1: Card[] = [
-  new Card("Ostrich", 1, 1, 3),
+  new OstrichCard("Ostrich", 1, 1, 3),
   new Card("Eagle", 2, 4, 2, [SpecialAbility.IgnoreFlip]),
   new DonkeyCard("Donkey", 3, 1, 2),
   new ButterflyCard("Butterfly", 4, 2, 3),

@@ -24,6 +24,16 @@ export class Slot {
       .map(s => s.card.getFame(data))
       .reduce((a, b) => a + b, 0);
   }
+
+  onCardPlayed(data: GameData, card: Card) {
+    this.cards().forEach(c => {
+      // facedown cards probably dont need to get events
+      if (c.facedown) {
+        return;
+      }
+      c.card.onCardPlayed(data, card);
+    })
+  }
 }
 
 export interface CardSlot {

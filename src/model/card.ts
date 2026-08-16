@@ -7,6 +7,7 @@ export enum SpecialAbility {
 }
 
 export interface GameData {
+  playedCards: Card[];
   market: Card[];
   grid: Slot[];
   dismissed: Card[];
@@ -40,9 +41,9 @@ export class Card {
   }
 
   //TODO: there must be a better way...
-  clone(card: Card) {
+  clone() {
     // @ts-ignore
-    return new this.constructor(card.name, card.rank, card.fame, card.count, card.specialAbilities);
+    return new this.constructor(this.name, this.rank, this.fame, this.count, this.specialAbilities);
   }
 
   getIndex(data: GameData) {

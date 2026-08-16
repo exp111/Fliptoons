@@ -29,6 +29,7 @@ export class GameComponent {
 
   deck = signal<Card[]>(this.buildPlayerDeck());
   dismissed = signal<Card[]>([]);
+  playedCards = signal<Card[]>([]);
   grid = signal<Slot[]>(this.buildGrid());
 
   currentFame = signal(0);
@@ -39,7 +40,8 @@ export class GameComponent {
   gameData = computed<GameData>(() => ({
     market: this.market(),
     grid: this.grid(),
-    dismissed: this.dismissed()
+    dismissed: this.dismissed(),
+    playedCards: this.playedCards(),
   }));
 
   private sortByRank(array: Card[]) {
@@ -59,7 +61,7 @@ export class GameComponent {
     let deck: Card[] = [];
     for (let card of array) {
       for (let i = 0; i < card.count; i++) {
-        deck.push(card.clone(card));
+        deck.push(card.clone());
       }
     }
     // then shuffle + filter out
@@ -140,6 +142,10 @@ export class GameComponent {
 
   playCard(slot: Slot, card: Card) {
     slot.addCard(card);
+    // add card to history
+    this.playedCards.update((c) => [...c, card]);
+    // trigger card played event
+    this.grid().forEach((s) => s.onCardPlayed(this.gameData(), card));
   }
 
   // state machine
@@ -166,13 +172,18 @@ export class GameComponent {
     this.isWorking.set(false);
   }
 
+  getNextEmptySlot() {
+    return this.grid().find((s) => s.cards().length == 0);
+  }
+
   async flipCards() {
     // shuffle cards back into deck
     this.deck.update((d) => shuffleArray(d));
-    // fill slots
-    for (let slot of this.grid()) {
-      // out of cards
-      if (this.deck().length == 0) {
+    // fill slots until no slots are left or the deck is empty
+    while (this.deck().length > 0) {
+      let nextSlot = this.getNextEmptySlot();
+      // no slots left
+      if (!nextSlot) {
         break;
       }
       let card = this.drawCard(this.deck);
@@ -213,6 +224,8 @@ export class GameComponent {
       let cards = slot.cleanup();
       this.deck.update((d) => [...d, ...cards]);
     }
+    // clean history
+    this.playedCards.set([]);
     // discard left most and right most market cards
     let left = this.market()[0];
     let right = this.market()[this.market().length - 1];
