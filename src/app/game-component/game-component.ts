@@ -1,4 +1,4 @@
-import { Component, computed, signal, WritableSignal } from '@angular/core';
+import { Component, computed, input, signal, WritableSignal } from '@angular/core';
 import { HireEvent, MarketComponent } from './market-component/market-component';
 import { DismissEvent, SlotComponent } from './slot-component/slot-component';
 import { Card, GameData } from '../../model/card';
@@ -6,10 +6,11 @@ import { cardsSeason1, cardsSeason1Starter, soloBlacklist } from '../../model/da
 import { shuffleArray } from '../utils';
 import { Phase } from '../../model/phase';
 import { Slot } from '../../model/slot';
+import { CheatMenuComponent } from './cheat-menu-component/cheat-menu-component';
 
 @Component({
   selector: 'app-game-component',
-  imports: [MarketComponent, SlotComponent],
+  imports: [MarketComponent, SlotComponent, CheatMenuComponent],
   templateUrl: './game-component.html',
   styleUrl: './game-component.scss',
 })
@@ -18,6 +19,8 @@ export class GameComponent {
   MARKET_SIZE = 5;
   CARD_DRAW_TIME = 500;
   MARKET_ACTIONS = 2;
+
+  allowCheats = input(false, { transform: (v) => v !== undefined });
 
   currentPhase = signal<Phase>(Phase.FLIP);
   marketDeck = signal<Card[]>(this.buildMarketDeck());

@@ -10,3 +10,6 @@
     <app-slot-component [slot]="slot" [dismissable]="canHireOrDismiss()" [fame]="currentFame()" (dismiss)="onDismiss($event)"></app-slot-component>
   }
 </div>
+@if (allowCheats()) {
+  <app-cheat-menu-component [game]="this"></app-cheat-menu-component>
+}

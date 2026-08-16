@@ -5,7 +5,7 @@ import { GameComponent } from './game-component/game-component';
 export const routes: Routes = [
   {
     path: "cards",
-    component: CardsComponent
+    component: CardsComponent,
   },
   {
     path: "**",
