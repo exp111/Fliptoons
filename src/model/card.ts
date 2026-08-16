@@ -46,7 +46,7 @@ export class Card {
   }
 
   getIndex(data: GameData) {
-    let index = data.grid.findIndex((c) => c.cards.some(c => c.card === this));
+    let index = data.grid.findIndex((c) => c.cards().some(c => c.card === this));
     if (index < 0) {
       console.error(`Could not find card ${this.name} in grid.`);
     }
@@ -66,7 +66,7 @@ export class Card {
         }
         let slot = data.grid[i];
         // all cards in slot are adjacent
-        cards.push(...slot.cards.map(s => s.card));
+        cards.push(...slot.cards().map(s => s.card));
       }
       return cards;
     }

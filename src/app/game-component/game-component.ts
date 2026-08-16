@@ -130,11 +130,13 @@ export class GameComponent {
   calculateFame() {
     this.currentFame.set(
       this.grid()
-        .map((c) =>
-          c.getFame(this.gameData()),
-        )
+        .map((c) => c.getFame(this.gameData()))
         .reduce((a, b) => a + b, 0),
     );
+  }
+
+  playCard(slot: Slot, card: Card) {
+    slot.addCard(card);
   }
 
   // state machine
@@ -171,8 +173,7 @@ export class GameComponent {
         break;
       }
       let card = this.drawCard(this.deck);
-      //TODO: this doesnt trigger a rerender because it doesnt update the signal
-      slot.addCard(card);
+      this.playCard(nextSlot, card);
       this.calculateFame();
       // wait
       await new Promise((resolve) => setTimeout(resolve, this.CARD_DRAW_TIME));
