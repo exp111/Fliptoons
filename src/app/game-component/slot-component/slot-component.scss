@@ -3,7 +3,7 @@
 .slot {
   margin: 0.5rem;
   border: 1px dashed black;
-  height: calc(33.3vw*1.15);
+  height: calc(33.3vw*1.15); //TODO: make this one higher if stacked cards are overflowing. also fix this in general
   border-radius: variables.$corner-radius;
   position: relative;
 

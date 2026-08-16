@@ -28,6 +28,8 @@ export class CheatMenuComponent {
     dialog.close();
   }
 
+  //TODO: order editor?
+
   protected readonly cardsSeason1 = cardsSeason1;
   protected readonly cardsSeason1Starter = cardsSeason1Starter;
 }

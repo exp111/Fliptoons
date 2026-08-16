@@ -92,6 +92,9 @@ export class GameComponent {
   }
 
   onHire(e: HireEvent) {
+    if (!confirm(`Do you want to hire '${e.card.name}' for '${e.price}' fame.`)) {
+      return;
+    }
     // remove card from market
     this.market.update((m) => m.filter((c) => c !== e.card));
     // add to deck
@@ -105,6 +108,9 @@ export class GameComponent {
   }
 
   onDismiss(e: DismissEvent) {
+    if (!confirm(`Do you want to dismiss '${e.card.name}' for '${e.cost}' fame.`)) {
+      return;
+    }
     // remove card from grid
     e.slot.removeCard(e.card);
     // add to dismiss pile
