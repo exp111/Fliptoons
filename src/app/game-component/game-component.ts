@@ -43,8 +43,8 @@ export class GameComponent {
     dismissed: this.dismissed(),
     playedCards: this.playedCards(),
     // methods
-    addMarketAction: () => this.marketActionsLeft.update(a => a + 1),
-    addFame: (fame: number) => this.currentFame.update(f => f + fame)
+    addMarketAction: () => this.marketActionsLeft.update((a) => a + 1),
+    addFame: (fame: number) => this.currentFame.update((f) => f + fame),
   }));
 
   private sortByRank(array: Card[]) {
@@ -133,7 +133,7 @@ export class GameComponent {
     let cards = this.drawCards(this.marketDeck, missingCards);
     // if market deck is empty, game is lost
     if (cards.length < missingCards) {
-      this.currentPhase.set(Phase.LOST);
+      this.changePhase(Phase.LOST);
       return false;
     }
     // add to market + sort
@@ -157,6 +157,12 @@ export class GameComponent {
     this.grid().forEach((s) => s.onCardPlayed(this.gameData(), card));
   }
 
+  changePhase(phase: Phase) {
+    let previous = this.currentPhase();
+    this.currentPhase.set(phase);
+    this.grid().forEach((s) => s.onPhaseChange(this.gameData(), previous, phase));
+  }
+
   // state machine
   async nextPhase() {
     this.isWorking.set(true);
@@ -175,7 +181,7 @@ export class GameComponent {
         break;
       default:
         console.error(`Unknown phase: ${this.currentPhase()}. Resetting.`);
-        this.currentPhase.set(Phase.FLIP);
+        this.changePhase(Phase.FLIP);
         break;
     }
     this.isWorking.set(false);
@@ -201,15 +207,15 @@ export class GameComponent {
       // wait
       await new Promise((resolve) => setTimeout(resolve, this.CARD_DRAW_TIME));
     }
-    this.currentPhase.set(Phase.CHECK_FAME);
+    this.changePhase(Phase.CHECK_FAME);
   }
 
   async checkFame() {
     if (this.currentFame() >= 30) {
-      this.currentPhase.set(Phase.WON);
+      this.changePhase(Phase.WON);
       return;
     }
-    this.currentPhase.set(Phase.MARKET);
+    this.changePhase(Phase.MARKET);
     // set market actions
     this.marketActionsLeft.set(this.MARKET_ACTIONS);
   }
@@ -224,7 +230,7 @@ export class GameComponent {
       return;
     }
     this.marketActionsLeft.set(0);
-    this.currentPhase.set(Phase.CLEANUP);
+    this.changePhase(Phase.CLEANUP);
   }
 
   async cleanup() {
@@ -242,7 +248,7 @@ export class GameComponent {
     if (!this.refillMarket()) {
       return;
     }
-    this.currentPhase.set(Phase.FLIP);
+    this.changePhase(Phase.FLIP);
   }
 
   protected readonly Phase = Phase;

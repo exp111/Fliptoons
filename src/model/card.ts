@@ -104,10 +104,8 @@ export class Card {
   }
 
   onPhaseChange(data: GameData, previous: Phase, next: Phase) {
-    //TODO: trigger
   }
 
   onCardPlayed(data: GameData, card: Card) {
-    //TODO: trigger
   }
 }

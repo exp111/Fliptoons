@@ -12,10 +12,18 @@ export class DonkeyCard extends Card {
   }
 
   override onPhaseChange(data: GameData, previous: Phase, next: Phase) {
-    if (previous == Phase.MARKET) {
-      if (this.isInLowerRow(data)) {
-        //TODO: dismiss self
-      }
+    if (previous != Phase.MARKET) {
+      return;
     }
+    if (!this.isInLowerRow(data)) {
+      return;
+    }
+    // dismiss self
+    let slot = this.getSlot(data);
+    if (!slot) {
+      return;
+    }
+    slot.removeCard(this);
+    data.dismissed.push(this);
   }
 }

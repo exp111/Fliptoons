@@ -7,11 +7,8 @@ export class OstrichCard extends Card {
       return;
     }
     let ownSlot = this.getSlot(data);
-    if (!ownSlot) {
-      return;
-    }
     let cardSlot = card.getSlot(data);
-    if (!cardSlot) {
+    if (!ownSlot || !cardSlot) {
       return;
     }
     // move card from new slot to our slot

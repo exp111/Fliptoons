@@ -15,6 +15,8 @@ import { BearCard } from './cards/bear';
 import { BullCard } from './cards/bull';
 import { DeerCard } from './cards/deer';
 import { PeacockCard } from './cards/peacock';
+import { TurkeyCard } from './cards/turkey';
+import { CatCard } from './cards/cat';
 
 export const prices = [3, 4, 7, 10, 15];
 export const cardsSeason1: Card[] = [
@@ -31,13 +33,13 @@ export const cardsSeason1: Card[] = [
   new Card("Snake", 11, 1, 2),
   new Card("Elephant", 12, 7, 2, [SpecialAbility.IgnoreFlip]),
   new RoosterCard("Rooster", 13, 0, 2),
-  new Card("Cat", 14, 1, 2, [SpecialAbility.NoDismiss]),
+  new CatCard("Cat", 14, 1, 2, [SpecialAbility.NoDismiss]),
   new Card("Alligator", 15, 6, 2),
   new LionCard("Lion", 16, 3, 2),
   new Card("Monkey", 17, 3, 2),
   new Card("Pig", 18, -1, 1),
   new PeacockCard("Peacock", 19, 5, 2),
-  new Card("Turkey", 20, 5, 2),
+  new TurkeyCard("Turkey", 20, 5, 2),
   new BullCard("Bull", 21, 3, 1, [SpecialAbility.IgnoreFlip]),
   new TigerCard("Tiger", 22, 3, 1, [SpecialAbility.NoDismiss]),
   new DeerCard("Deer", 23, 3, 1),
