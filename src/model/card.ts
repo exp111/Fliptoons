@@ -14,6 +14,8 @@ export interface GameData {
 export class Card {
   GRID_ROW_SIZE = 3;
   DISMISS_COST = 5;
+  // left, right, above, below
+  ADJACENT_OFFSETS = [-1, 1, -this.GRID_ROW_SIZE, this.GRID_ROW_SIZE];
 
   name: string;
   // 1-25
@@ -39,13 +41,7 @@ export class Card {
   //TODO: there must be a better way...
   clone(card: Card) {
     // @ts-ignore
-    return new this.constructor(
-      card.name,
-      card.rank,
-      card.fame,
-      card.count,
-      card.specialAbilities,
-    );
+    return new this.constructor(card.name, card.rank, card.fame, card.count, card.specialAbilities);
   }
 
   getIndex(data: GameData) {
@@ -54,6 +50,26 @@ export class Card {
       console.error(`Could not find card ${this.name} in grid.`);
     }
     return index;
+  }
+
+  getAdjacentCards(data: GameData) {
+    let index = this.getIndex(data);
+    if (index >= 0) {
+      let cards = [];
+      // check each adjacent cards
+      for (let offset of this.ADJACENT_OFFSETS) {
+        let i = index + offset;
+        // out of range
+        if (i < 0 || i >= data.grid.length) {
+          continue;
+        }
+        let card = data.grid[i];
+        cards.push(card);
+      }
+      return cards;
+    }
+    console.error(`Could not find self (${this.name}) in grid.`);
+    return [];
   }
 
   getFame(data: GameData) {
