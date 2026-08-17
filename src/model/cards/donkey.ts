@@ -11,7 +11,7 @@ export class DonkeyCard extends Card {
     return this.isInLowerRow(data) ? this.fame + 5 : this.fame;
   }
 
-  override onPhaseChange(data: GameData, previous: Phase, next: Phase) {
+  override async onPhaseChange(data: GameData, previous: Phase, next: Phase) {
     if (previous != Phase.MARKET) {
       return;
     }

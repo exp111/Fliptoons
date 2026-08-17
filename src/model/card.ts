@@ -1,9 +1,10 @@
 import { Phase } from './phase';
 import { Slot } from './slot';
+import { PromptOptions } from './prompt';
 
 export enum SpecialAbility {
   NoDismiss,
-  IgnoreFlip
+  IgnoreFlip,
 }
 
 export interface GameData {
@@ -14,6 +15,7 @@ export interface GameData {
   // methods
   addMarketAction: () => void;
   addFame: (fame: number) => void;
+  prompt: (options: PromptOptions) => Promise<Card | null>;
 }
 
 export class Card {
@@ -50,7 +52,7 @@ export class Card {
   }
 
   getSlotIndex(data: GameData) {
-    let index = data.grid.findIndex((c) => c.cards().some(c => c.card === this));
+    let index = data.grid.findIndex((c) => c.cards().some((c) => c.card === this));
     if (index < 0) {
       console.error(`Could not find card ${this.name} in grid.`);
     }
@@ -75,7 +77,7 @@ export class Card {
         }
         let slot = data.grid[i];
         // all cards in slot are adjacent
-        cards.push(...slot.cards().map(s => s.card));
+        cards.push(...slot.cards().map((s) => s.card));
       }
       return cards;
     }
@@ -100,12 +102,9 @@ export class Card {
   }
 
   // Events
-  onHire(data: GameData) {
-  }
+  async onHire(data: GameData) {}
 
-  onPhaseChange(data: GameData, previous: Phase, next: Phase) {
-  }
+  async onPhaseChange(data: GameData, previous: Phase, next: Phase) {}
 
-  onCardPlayed(data: GameData, card: Card) {
-  }
+  async onCardPlayed(data: GameData, card: Card) {}
 }

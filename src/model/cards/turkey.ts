@@ -1,7 +1,7 @@
 import { Card, GameData } from '../card';
 
 export class TurkeyCard extends Card {
-  override onCardPlayed(data: GameData, card: Card) {
+  override async onCardPlayed(data: GameData, card: Card) {
     // only if this card was played
     if (card !== this) {
       return;

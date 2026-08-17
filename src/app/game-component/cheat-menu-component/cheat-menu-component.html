@@ -12,7 +12,7 @@
     </optgroup>
     <optgroup label="Season 1">
       @for (card of cardsSeason1; track card.name) {
-        <option [value]="card.name">{{card.name}}</option>
+        <option [value]="card.name">{{card.name}} ({{card.rank}})</option>
       }
     </optgroup>
   </select>
@@ -31,7 +31,7 @@
     </optgroup>
     <optgroup label="Season 1">
       @for (card of cardsSeason1; track card.name) {
-        <option [value]="card.name">{{card.name}}</option>
+        <option [value]="card.name">{{card.name}} ({{card.rank}})</option>
       }
     </optgroup>
   </select>

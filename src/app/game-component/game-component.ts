@@ -1,4 +1,12 @@
-import { Component, computed, input, signal, WritableSignal } from '@angular/core';
+import {
+  Component,
+  computed,
+  ElementRef,
+  input,
+  signal,
+  viewChild,
+  WritableSignal,
+} from '@angular/core';
 import { HireEvent, MarketComponent } from './market-component/market-component';
 import { DismissEvent, SlotComponent } from './slot-component/slot-component';
 import { Card, GameData } from '../../model/card';
@@ -7,6 +15,8 @@ import { shuffleArray } from '../utils';
 import { Phase } from '../../model/phase';
 import { Slot } from '../../model/slot';
 import { CheatMenuComponent } from './cheat-menu-component/cheat-menu-component';
+import { firstValueFrom, Observable, Subject } from 'rxjs';
+import { PromptOptions } from '../../model/prompt';
 
 @Component({
   selector: 'app-game-component',
@@ -37,6 +47,10 @@ export class GameComponent {
   canHireOrDismiss = computed(() => this.marketActionsLeft() > 0);
   isWorking = signal(false);
 
+  promptDialog = viewChild.required<ElementRef<HTMLDialogElement>>("promptDialog");
+  promptOptions = signal<PromptOptions>({options: [], text: ''});
+  promptHold = new Subject<Card | null>();
+
   gameData = computed<GameData>(() => ({
     market: this.market(),
     grid: this.grid(),
@@ -45,7 +59,17 @@ export class GameComponent {
     // methods
     addMarketAction: () => this.marketActionsLeft.update((a) => a + 1),
     addFame: (fame: number) => this.currentFame.update((f) => f + fame),
+    prompt: (options: PromptOptions) => {
+      this.promptOptions.set(options);
+      this.promptDialog().nativeElement.showModal();
+      return firstValueFrom(this.promptHold);
+    },
   }));
+
+  chooseOption(option: Card | null) {
+    this.promptDialog().nativeElement.close();
+    this.promptHold.next(option);
+  }
 
   private sortByRank(array: Card[]) {
     return array.sort((a, b) => a.rank - b.rank);
@@ -94,7 +118,7 @@ export class GameComponent {
     return this.drawCards(deck, 1)[0];
   }
 
-  onHire(e: HireEvent) {
+  async onHire(e: HireEvent) {
     if (!confirm(`Do you want to hire '${e.card.name}' for '${e.price}' fame.`)) {
       return;
     }
@@ -107,7 +131,7 @@ export class GameComponent {
     // use action
     this.marketActionsLeft.update((a) => a - 1);
     // trigger event
-    e.card.onHire(this.gameData());
+    await e.card.onHire(this.gameData());
   }
 
   onDismiss(e: DismissEvent) {
@@ -149,18 +173,20 @@ export class GameComponent {
     );
   }
 
-  playCard(slot: Slot, card: Card) {
+  async playCard(slot: Slot, card: Card) {
     slot.addCard(card);
     // add card to history
     this.playedCards.update((c) => [...c, card]);
     // trigger card played event
-    this.grid().forEach((s) => s.onCardPlayed(this.gameData(), card));
+    for (const s of this.grid()) {
+      await s.onCardPlayed(this.gameData(), card);
+    }
   }
 
   changePhase(phase: Phase) {
     let previous = this.currentPhase();
     this.currentPhase.set(phase);
-    this.grid().forEach((s) => s.onPhaseChange(this.gameData(), previous, phase));
+    this.grid().forEach(async (s) => await s.onPhaseChange(this.gameData(), previous, phase));
   }
 
   // state machine
@@ -180,10 +206,10 @@ export class GameComponent {
         await this.cleanup();
         break;
       case Phase.WON:
-        alert("You won!");
+        alert('You won!');
         break;
       case Phase.LOST:
-        alert("You lost!");
+        alert('You lost!');
         break;
       default:
         console.error(`Unknown phase: ${this.currentPhase()}. Resetting.`);
@@ -208,7 +234,7 @@ export class GameComponent {
         break;
       }
       let card = this.drawCard(this.deck);
-      this.playCard(nextSlot, card);
+      await this.playCard(nextSlot, card);
       this.calculateFame();
       // wait
       await new Promise((resolve) => setTimeout(resolve, this.CARD_DRAW_TIME));
@@ -250,7 +276,7 @@ export class GameComponent {
     // discard left most and right most market cards
     let left = this.market()[0];
     let right = this.market()[this.market().length - 1];
-    this.market.update(m => m.filter((c, i) => i > 0 && i < m.length - 1));
+    this.market.update((m) => m.filter((c, i) => i > 0 && i < m.length - 1));
     this.marketDiscard.update((d) => [...d, left, right]);
     if (!this.refillMarket()) {
       return;

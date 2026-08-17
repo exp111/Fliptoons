@@ -13,3 +13,9 @@
 @if (allowCheats()) {
   <app-cheat-menu-component [game]="this"></app-cheat-menu-component>
 }
+<dialog #promptDialog>
+  <span>{{promptOptions().text}}</span>
+  @for (option of promptOptions().options; track $index) {
+    <button (click)="chooseOption(option)">{{option?.name ?? 'None'}}</button>
+  }
+</dialog>

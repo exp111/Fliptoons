@@ -27,18 +27,20 @@ export class Slot {
   }
 
   // Events
-  onCardPlayed(data: GameData, card: Card) {
-    this.cards().forEach((c) => {
+  async onCardPlayed(data: GameData, card: Card) {
+    for (const c of this.cards()) {
       // facedown cards probably don't need to get events
       if (c.facedown) {
-        return;
+        continue;
       }
-      c.card.onCardPlayed(data, card);
-    });
+      await c.card.onCardPlayed(data, card);
+    }
   }
 
-  onPhaseChange(data: GameData, previous: Phase, next: Phase) {
-    this.cards().forEach(c => c.card.onPhaseChange(data, previous, next));
+  async onPhaseChange(data: GameData, previous: Phase, next: Phase) {
+    for (const c of this.cards()) {
+      await c.card.onPhaseChange(data, previous, next);
+    }
   }
 }
 

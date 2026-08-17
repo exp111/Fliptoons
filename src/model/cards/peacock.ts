@@ -1,7 +1,7 @@
 import { Card, GameData } from '../card';
 
 export class PeacockCard extends Card {
-  override onHire(data: GameData) {
+  override async onHire(data: GameData) {
     data.addMarketAction();
     data.addFame(2);
   }
