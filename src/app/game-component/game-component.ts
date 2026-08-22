@@ -53,6 +53,17 @@ export class GameComponent {
   promptOptions = signal<PromptOptions>({ options: [], text: '' });
   promptHold = new Subject<Card | null>();
 
+  nextText = computed(() => {
+    switch (this.currentPhase()) {
+      case Phase.FLIP:
+        return "Flip";
+      case Phase.MARKET:
+        return "End Market";
+      default:
+        return "Next";
+    }
+  })
+
   gameData = computed<GameData>(() => ({
     market: this.market(),
     grid: this.grid(),
