@@ -1,4 +1,4 @@
-import { Card, GameData } from './card';
+import { Card, GameData, SpecialAbility } from './card';
 import { signal } from '@angular/core';
 import { Phase } from './phase';
 
@@ -12,11 +12,24 @@ export class Slot {
   }
 
   addCard(card: Card) {
-    this.cards.update((s) => [...s, { card: card, facedown: false }]);
+    this.cards.update((s) => [...s, new CardSlot(card)]);
   }
 
   removeCard(card: Card) {
     this.cards.update((s) => s.filter((c) => c.card !== card));
+  }
+
+  flipCard(card: Card) {
+    // ignore flip ability
+    if (card.specialAbilities?.includes(SpecialAbility.IgnoreFlip)) {
+      return;
+    }
+    let cardSlot = this.cards().find(cs => cs.card === card);
+    if (!cardSlot) {
+      console.error("Card not found inside slot");
+      return;
+    }
+    cardSlot.facedown = !cardSlot.facedown;
   }
 
   getFame(data: GameData) {
@@ -44,7 +57,19 @@ export class Slot {
   }
 }
 
-export interface CardSlot {
+export class CardSlot {
   card: Card;
   facedown: boolean;
+
+  constructor(card: Card) {
+    this.card = card;
+    this.facedown = false;
+  }
+
+  getImg() {
+    if (this.facedown) {
+      return "back.png";
+    }
+    return this.card.getImg();
+  }
 }

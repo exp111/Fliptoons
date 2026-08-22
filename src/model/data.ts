@@ -18,18 +18,20 @@ import { PeacockCard } from './cards/peacock';
 import { TurkeyCard } from './cards/turkey';
 import { CatCard } from './cards/cat';
 import { AlligatorCard } from './cards/alligator';
+import { RabbitCard } from './cards/rabbit';
+import { EagleCard } from './cards/eagle';
 
 export const prices = [3, 4, 7, 10, 15];
 export const cardsSeason1: Card[] = [
   new OstrichCard("Ostrich", 1, 1, 3),
-  new Card("Eagle", 2, 4, 2, [SpecialAbility.IgnoreFlip]),
+  new EagleCard("Eagle", 2, 4, 2, [SpecialAbility.IgnoreFlip]),
   new DonkeyCard("Donkey", 3, 1, 2),
   new ButterflyCard("Butterfly", 4, 2, 3),
   new DogCard("Dog", 5, 0, 4),
   new GoatCard("Goat", 6, 1, 2),
   new SheepCard("Sheep", 7, 1, 2),
   new CamelCard("Camel", 8, 2, 5),
-  new Card("Rabbit", 9, 3, 4, [SpecialAbility.IgnoreFlip]),
+  new RabbitCard("Rabbit", 9, 3, 4, [SpecialAbility.IgnoreFlip]),
   new Card("Horse", 10, 4, 2),
   new Card("Snake", 11, 1, 2),
   new Card("Elephant", 12, 7, 2, [SpecialAbility.IgnoreFlip]),

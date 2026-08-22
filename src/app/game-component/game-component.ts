@@ -59,13 +59,16 @@ export class GameComponent {
     // methods
     addMarketAction: () => this.marketActionsLeft.update((a) => a + 1),
     addFame: (fame: number) => this.currentFame.update((f) => f + fame),
+    // opens dialog and returns promise to wait for result
     prompt: (options: PromptOptions) => {
       this.promptOptions.set(options);
       this.promptDialog().nativeElement.showModal();
       return firstValueFrom(this.promptHold);
     },
+    dismissCard: (card: Card, slot?: Slot) => this.dismissCard(card, slot)
   }));
 
+  // closes dialog and emits the result to the promise
   chooseOption(option: Card | null) {
     this.promptDialog().nativeElement.close();
     this.promptHold.next(option);
@@ -138,14 +141,20 @@ export class GameComponent {
     if (!confirm(`Do you want to dismiss '${e.card.name}' for '${e.cost}' fame.`)) {
       return;
     }
-    // remove card from grid
-    e.slot.removeCard(e.card);
-    // add to dismiss pile
-    this.dismissed.update((d) => [...d, e.card]);
+    this.dismissCard(e.card, e.slot);
     // take money
     this.currentFame.update((f) => f - e.cost);
     // use action
     this.marketActionsLeft.update((f) => f - 1);
+  }
+
+  dismissCard(card: Card, slot?: Slot) {
+    if (slot) {
+      // remove card from grid
+      slot.removeCard(card);
+    }
+    // add to dismiss pile
+    this.dismissed.update((d) => [...d, card]);
   }
 
   refillMarket() {

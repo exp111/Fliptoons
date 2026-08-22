@@ -16,6 +16,14 @@ export interface GameData {
   addMarketAction: () => void;
   addFame: (fame: number) => void;
   prompt: (options: PromptOptions) => Promise<Card | null>;
+  dismissCard: (card: Card, slot?: Slot) => void;
+}
+
+export enum Direction {
+  Left = 0,
+  Right = 1,
+  Above = 2,
+  Below = 3,
 }
 
 export class Card {
@@ -64,12 +72,13 @@ export class Card {
     return data.grid[index] ?? null;
   }
 
-  getAdjacentCards(data: GameData) {
+  //TODO: fix adjacency when card is in next/previous row
+  getAdjacentCards(data: GameData, directions = this.ADJACENT_OFFSETS) {
     let index = this.getSlotIndex(data);
     if (index >= 0) {
       let cards = [];
       // check each adjacent cards
-      for (let offset of this.ADJACENT_OFFSETS) {
+      for (let offset of directions) {
         let i = index + offset;
         // out of range
         if (i < 0 || i >= data.grid.length) {

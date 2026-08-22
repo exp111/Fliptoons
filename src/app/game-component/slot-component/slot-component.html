@@ -1,5 +1,5 @@
 <div class="slot">
   @for (slot of slot().cards(); track $index) {
-    <img [src]="slot.card.getImg()" [class.facedown]="slot.facedown" [class.clickable]="canGetDismissed(slot.card)" (click)="dismissCard(slot.card)" [style.--index]="$index">
+    <img [src]="slot.getImg()" [class.facedown]="slot.facedown" [class.clickable]="canGetDismissed(slot.card)" (click)="dismissCard(slot.card)" [style.--index]="$index">
   }
 </div>
