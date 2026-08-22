@@ -10,7 +10,7 @@ import {
 import { HireEvent, MarketComponent } from './market-component/market-component';
 import { DismissEvent, SlotComponent } from './slot-component/slot-component';
 import { Card, GameData } from '../../model/card';
-import { cardsSeason1, cardsSeason1Starter, soloBlacklist } from '../../model/data';
+import { cardsSeason1, cardsSeason1Starter, prices, soloBlacklist } from '../../model/data';
 import { shuffleArray } from '../utils';
 import { Phase } from '../../model/phase';
 import { Slot } from '../../model/slot';
@@ -271,8 +271,24 @@ export class GameComponent {
     this.marketActionsLeft.set(this.MARKET_ACTIONS);
   }
 
+  canDoAnythingInMarket() {
+    // if no actions left, cant do anything
+    if (this.marketActionsLeft() == 0) {
+      return false;
+    }
+    // can still buy anything from market?
+    if (this.market().length > 0 && this.currentFame() >= prices[0]) {
+      return true;
+    }
+    // can still dismiss cards from grid?
+    if (this.grid().some(s => s.cards().some(d => this.currentFame() >= d.card.getDismissCost()))) {
+      return true;
+    }
+    return true;
+  }
+
   async marketPhase() {
-    if (this.marketActionsLeft() > 0) {
+    if (this.canDoAnythingInMarket()) {
       if (!confirm('You still have market actions left. Do you want to continue to cleanup?')) {
         return false;
       }
