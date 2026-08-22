@@ -19,3 +19,13 @@
     <button (click)="chooseOption(option)">{{option?.name ?? 'None'}}</button>
   }
 </dialog>
+<dialog #multiPromptDialog>
+  <span>{{promptOptions().text}}</span>
+  <!-- TODO: new line -->
+  @for (option of promptOptions().options; track $index) {
+    <!-- TODO: style checkboxes as toggle buttons -->
+    <input type="checkbox" (change)="toggleOption($index, $any($event.target))">{{option?.name ?? 'None'}}
+  }
+  <!-- TODO: new line -->
+  <button type="button" (click)="chooseOptions()">Submit</button>
+</dialog>

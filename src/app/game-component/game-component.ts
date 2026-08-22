@@ -50,19 +50,22 @@ export class GameComponent {
   isWorking = signal(false);
 
   promptDialog = viewChild.required<ElementRef<HTMLDialogElement>>('promptDialog');
+  multiPromptDialog = viewChild.required<ElementRef<HTMLDialogElement>>('multiPromptDialog');
   promptOptions = signal<PromptOptions>({ options: [], text: '' });
+  multiPromptSelection: boolean[] = [];
   promptHold = new Subject<Card | null>();
+  multiPromptHold = new Subject<Card[]>();
 
   nextText = computed(() => {
     switch (this.currentPhase()) {
       case Phase.FLIP:
-        return "Flip";
+        return 'Flip';
       case Phase.MARKET:
-        return "End Market";
+        return 'End Market';
       default:
-        return "Next";
+        return 'Next';
     }
-  })
+  });
 
   gameData = computed<GameData>(() => ({
     market: this.market(),
@@ -78,13 +81,30 @@ export class GameComponent {
       this.promptDialog().nativeElement.showModal();
       return firstValueFrom(this.promptHold);
     },
+    multiPrompt: (options: PromptOptions) => {
+      this.promptOptions.set(options);
+      this.multiPromptDialog().nativeElement.showModal();
+      return firstValueFrom(this.multiPromptHold);
+    },
     dismissCard: (card: Card, slot?: Slot) => this.dismissCard(card, slot),
+    dismissCardMarket: (card: Card) => this.dismissCardMarket(card),
+    refillMarket: (totalAmount = this.MARKET_SIZE) => this.refillMarket(totalAmount),
   }));
 
   // closes dialog and emits the result to the promise
   chooseOption(option: Card | null) {
     this.promptDialog().nativeElement.close();
     this.promptHold.next(option);
+  }
+
+  toggleOption(index: number, target: HTMLInputElement) {
+    this.multiPromptSelection[index] = target.checked;
+  }
+
+  chooseOptions() {
+    let options = this.promptOptions().options.filter((o,i) => o && this.multiPromptSelection[i]) as Card[];
+    this.multiPromptDialog().nativeElement.close();
+    this.multiPromptHold.next(options);
   }
 
   private sortByRank(array: Card[]) {
@@ -170,8 +190,13 @@ export class GameComponent {
     this.dismissed.update((d) => [...d, card]);
   }
 
-  refillMarket() {
-    let missingCards = this.MARKET_SIZE - this.market().length;
+  dismissCardMarket(card: Card) {
+    this.market.update(m => m.filter(c => c !== card));
+    this.marketDiscard.update(d => [...d, card]);
+  }
+
+  refillMarket(totalAmount = this.MARKET_SIZE) {
+    let missingCards = totalAmount - this.market().length;
     if (missingCards == 0) {
       return true;
     }
@@ -292,7 +317,9 @@ export class GameComponent {
       return true;
     }
     // can still dismiss cards from grid?
-    if (this.grid().some(s => s.cards().some(d => this.currentFame() >= d.card.getDismissCost()))) {
+    if (
+      this.grid().some((s) => s.cards().some((d) => this.currentFame() >= d.card.getDismissCost()))
+    ) {
       return true;
     }
     return true;
@@ -323,8 +350,8 @@ export class GameComponent {
     // discard left most and right most market cards
     let left = this.market()[0];
     let right = this.market()[this.market().length - 1];
-    this.market.update((m) => m.filter((c, i) => i > 0 && i < m.length - 1));
-    this.marketDiscard.update((d) => [...d, left, right]);
+    this.dismissCardMarket(left);
+    this.dismissCardMarket(right);
     if (!this.refillMarket()) {
       return;
     }

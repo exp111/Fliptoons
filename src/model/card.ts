@@ -16,7 +16,10 @@ export interface GameData {
   addMarketAction: () => void;
   addFame: (fame: number) => void;
   prompt: (options: PromptOptions) => Promise<Card | null>;
+  multiPrompt: (options: PromptOptions) => Promise<Card[]>;
   dismissCard: (card: Card, slot?: Slot) => void;
+  dismissCardMarket: (card: Card) => void;
+  refillMarket: (totalAmount: number) => void;
 }
 
 export enum Direction {
