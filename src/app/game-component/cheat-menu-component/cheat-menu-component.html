@@ -1,5 +1,6 @@
 <button command="show-modal" commandfor="add-card-dialog">Add Card</button>
 <button command="show-modal" commandfor="add-card-market-dialog">Add Card to Market</button>
+<button command="show-modal" commandfor="edit-deck-order-dialog">Edit Deck Order</button>
 <button (click)="addFame()">Add Fame</button>
 <!-- Dialogs -->
 <dialog id="add-card-dialog" #addCardDialog>
@@ -7,12 +8,12 @@
     <option disabled>Select card</option>
     <optgroup label="Season 1 Starter">
       @for (card of cardsSeason1Starter; track card.name) {
-        <option [value]="card.name">{{card.name}}</option>
+        <option [value]="card.name">{{ card.name }}</option>
       }
     </optgroup>
     <optgroup label="Season 1">
       @for (card of cardsSeason1; track card.name) {
-        <option [value]="card.name">{{card.name}} ({{card.rank}})</option>
+        <option [value]="card.name">{{ card.name }} ({{ card.rank }})</option>
       }
     </optgroup>
   </select>
@@ -26,15 +27,38 @@
     <option disabled>Select card</option>
     <optgroup label="Season 1 Starter">
       @for (card of cardsSeason1Starter; track card.name) {
-        <option [value]="card.name">{{card.name}}</option>
+        <option [value]="card.name">{{ card.name }}</option>
       }
     </optgroup>
     <optgroup label="Season 1">
       @for (card of cardsSeason1; track card.name) {
-        <option [value]="card.name">{{card.name}} ({{card.rank}})</option>
+        <option [value]="card.name">{{ card.name }} ({{ card.rank }})</option>
       }
     </optgroup>
   </select>
-  <button (click)="addCardToMarket(addCardMarketDialog, addCardMarketNumber.value, addCardMarketSelect.value)">Add Card</button>
+  <button (click)="addCardToMarket(addCardMarketDialog, addCardMarketNumber.value, addCardMarketSelect.value)">Add
+    Card
+  </button>
   <button commandfor="add-card-market-dialog" command="close">Close</button>
+</dialog>
+
+<dialog id="edit-deck-order-dialog">
+  <div class="container">
+    @for (card of game().deck(); track $index) {
+      <div class="row">
+        <span>
+          {{ card.name }}
+          @if ($index < game().AMOUNT_SLOTS) {
+            ({{ $index + 1 }})
+          }
+        </span>
+        <button [disabled]="$index == 0" (click)="moveCard($index, -1)">&#8593;</button>
+        <button [disabled]="$index == $count - 1" (click)="moveCard($index, 1)">&#8595;</button>
+      </div>
+    }
+    <div class="buttons">
+      <button (click)="shuffle()">Shuffle</button>
+      <button commandfor="edit-deck-order-dialog" command="close">Save</button>
+    </div>
+  </div>
 </dialog>

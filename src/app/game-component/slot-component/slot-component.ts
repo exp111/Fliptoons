@@ -1,6 +1,5 @@
-import { Component, computed, input, output } from '@angular/core';
-import { Card } from '../../../model/card';
-import {HireEvent} from '../market-component/market-component';
+import { Component, input, output } from '@angular/core';
+import { Card, GameData } from '../../../model/card';
 import { Slot } from '../../../model/slot';
 
 export interface DismissEvent {
@@ -19,6 +18,7 @@ export class SlotComponent {
   slot = input.required<Slot>();
   dismissable = input.required<boolean>();
   fame = input.required<number>();
+  gameData = input.required<GameData>();
 
   dismiss = output<DismissEvent>();
 
@@ -30,7 +30,7 @@ export class SlotComponent {
     // not enough fame
     let cost = card.getDismissCost();
     if (this.fame() < cost) {
-      return false
+      return false;
     }
     // card not dismissable
     if (!card.canGetDismissed()) {

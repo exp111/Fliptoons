@@ -23,7 +23,7 @@ export class CheatMenuComponent {
       return;
     }
     // add card to deck
-    this.game().deck.update(d => [...d, card.clone()]);
+    this.game().deck.update((d) => [...d, card.clone()]);
     // close dialog
     dialog.close();
   }
@@ -42,7 +42,11 @@ export class CheatMenuComponent {
       return;
     }
     // add card to market
-    this.game().market.update(m => [...m.slice(0, slotIndex), card.clone(), ...m.slice(slotIndex + 1)]);
+    this.game().market.update((m) => [
+      ...m.slice(0, slotIndex),
+      card.clone(),
+      ...m.slice(slotIndex + 1),
+    ]);
     // close dialog
     dialog.close();
   }
@@ -59,7 +63,16 @@ export class CheatMenuComponent {
     this.game().currentFame.update((f) => f + fame);
   }
 
-  //TODO: deck order editor?
+  shuffle() {
+    this.game().shuffle();
+  }
+
+  moveCard(index: number, number: number) {
+    this.game().deck.update((d) => {
+      let card = d.splice(index, 1)[0];
+      return [...d.slice(0, index + number), card, ...d.slice(index + number)];
+    });
+  }
 
   protected readonly cardsSeason1 = cardsSeason1;
   protected readonly cardsSeason1Starter = cardsSeason1Starter;

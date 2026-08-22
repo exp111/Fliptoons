@@ -72,26 +72,33 @@ export class Card {
     return data.grid[index] ?? null;
   }
 
-  //TODO: fix adjacency when card is in next/previous row
   getAdjacentCards(data: GameData, directions = this.ADJACENT_OFFSETS) {
     let index = this.getSlotIndex(data);
-    if (index >= 0) {
-      let cards = [];
-      // check each adjacent cards
-      for (let offset of directions) {
-        let i = index + offset;
-        // out of range
-        if (i < 0 || i >= data.grid.length) {
-          continue;
-        }
-        let slot = data.grid[i];
-        // all cards in slot are adjacent
-        cards.push(...slot.cards().map((s) => s.card));
-      }
-      return cards;
+    if (index < 0) {
+      console.error(`Could not find self (${this.name}) in grid.`);
+      return [];
     }
-    console.error(`Could not find self (${this.name}) in grid.`);
-    return [];
+    const column = index % this.GRID_ROW_SIZE;
+    const cards = [];
+    // check each adjacent cards
+    for (let offset of directions) {
+      // skip row edges
+      if (
+        (column == 0 && offset == this.ADJACENT_OFFSETS[Direction.Left]) ||
+        (column == this.GRID_ROW_SIZE - 1 && offset == this.ADJACENT_OFFSETS[Direction.Right])
+      ) {
+        continue;
+      }
+      let i = index + offset;
+      // out of range
+      if (i < 0 || i >= data.grid.length) {
+        continue;
+      }
+      let slot = data.grid[i];
+      // all cards in slot are adjacent
+      cards.push(...slot.cards().map((s) => s.card));
+    }
+    return cards;
   }
 
   getImg() {

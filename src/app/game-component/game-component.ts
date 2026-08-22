@@ -232,9 +232,11 @@ export class GameComponent {
     return this.grid().find((s) => s.cards().length == 0);
   }
 
-  async flipCards() {
-    // shuffle cards back into deck
+  shuffle() {
     this.deck.update((d) => shuffleArray(d));
+  }
+
+  async flipCards() {
     // fill slots until no slots are left or the deck is empty
     while (this.deck().length > 0) {
       let nextSlot = this.getNextEmptySlot();
@@ -291,6 +293,7 @@ export class GameComponent {
       return;
     }
     this.changePhase(Phase.FLIP);
+    this.shuffle();
   }
 
   protected readonly Phase = Phase;

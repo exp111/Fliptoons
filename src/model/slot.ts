@@ -34,8 +34,7 @@ export class Slot {
 
   getFame(data: GameData) {
     return this.cards()
-      .filter((c) => !c.facedown)
-      .map((s) => s.card.getFame(data))
+      .map((s) => s.getFame(data))
       .reduce((a, b) => a + b, 0);
   }
 
@@ -64,6 +63,10 @@ export class CardSlot {
   constructor(card: Card) {
     this.card = card;
     this.facedown = false;
+  }
+
+  getFame(data: GameData) {
+    return this.facedown ? 0 : this.card.getFame(data);
   }
 
   getImg() {
