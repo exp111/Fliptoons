@@ -30,7 +30,9 @@ export class GameComponent {
   CARD_DRAW_TIME = 500;
   MARKET_ACTIONS = 2;
 
-  allowCheats = input(false, { transform: (v) => v !== undefined });
+  flagParser = (v: unknown) => v !== undefined;
+  allowCheats = input(false, { transform: this.flagParser });
+  manual = input(false, { transform: this.flagParser });
 
   currentPhase = signal<Phase>(Phase.FLIP);
   marketDeck = signal<Card[]>(this.buildMarketDeck());
@@ -47,8 +49,8 @@ export class GameComponent {
   canHireOrDismiss = computed(() => this.marketActionsLeft() > 0);
   isWorking = signal(false);
 
-  promptDialog = viewChild.required<ElementRef<HTMLDialogElement>>("promptDialog");
-  promptOptions = signal<PromptOptions>({options: [], text: ''});
+  promptDialog = viewChild.required<ElementRef<HTMLDialogElement>>('promptDialog');
+  promptOptions = signal<PromptOptions>({ options: [], text: '' });
   promptHold = new Subject<Card | null>();
 
   gameData = computed<GameData>(() => ({
@@ -65,7 +67,7 @@ export class GameComponent {
       this.promptDialog().nativeElement.showModal();
       return firstValueFrom(this.promptHold);
     },
-    dismissCard: (card: Card, slot?: Slot) => this.dismissCard(card, slot)
+    dismissCard: (card: Card, slot?: Slot) => this.dismissCard(card, slot),
   }));
 
   // closes dialog and emits the result to the promise
@@ -204,12 +206,18 @@ export class GameComponent {
     switch (this.currentPhase()) {
       case Phase.FLIP:
         await this.flipCards();
+        if (!this.manual()) {
+          await this.nextPhase();
+        }
         break;
       case Phase.CHECK_FAME:
         await this.checkFame();
         break;
       case Phase.MARKET:
-        await this.marketPhase();
+        let res = await this.marketPhase();
+        if (res && !this.manual()) {
+          await this.nextPhase();
+        }
         break;
       case Phase.CLEANUP:
         await this.cleanup();
@@ -266,14 +274,15 @@ export class GameComponent {
   async marketPhase() {
     if (this.marketActionsLeft() > 0) {
       if (!confirm('You still have market actions left. Do you want to continue to cleanup?')) {
-        return;
+        return false;
       }
     }
     if (!this.refillMarket()) {
-      return;
+      return false;
     }
     this.marketActionsLeft.set(0);
     this.changePhase(Phase.CLEANUP);
+    return true;
   }
 
   async cleanup() {
