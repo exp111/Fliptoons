@@ -11,9 +11,10 @@ export class ButterflyCard extends Card {
         // allow user to select none
         null
       ]});
-    if (!res) {
+    let slot = res?.getSlot(data);
+    if (!res || !slot) {
       return;
     }
-    //TODO: dismiss caterpillar
+    data.dismissCard(res, slot);
   }
 }
