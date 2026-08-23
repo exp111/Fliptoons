@@ -74,6 +74,22 @@ export class CheatMenuComponent {
     });
   }
 
+  async openPrompt() {
+    let res = await this.game().gameData().prompt({
+      text: "Choose:",
+      options: this.game().marketDeck().slice(0, 2)
+    })
+    console.log(res);
+  }
+
+  async openMultiPrompt() {
+    let res = await this.game().gameData().multiPrompt({
+        text: 'Choose:',
+        options: this.game().marketDeck().slice(0, 2)
+      });
+    console.log(res);
+  }
+
   protected readonly cardsSeason1 = cardsSeason1;
   protected readonly cardsSeason1Starter = cardsSeason1Starter;
 }

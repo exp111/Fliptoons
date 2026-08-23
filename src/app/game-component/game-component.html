@@ -1,31 +1,42 @@
-<span>Phase: {{Phase[currentPhase()]}}</span>
+<span>Phase: {{ Phase[currentPhase()] }}</span>
 <!-- Market -->
-<span>Cards in Market Deck: {{marketDeck().length}}, Actions left: {{marketActionsLeft()}}</span>
-<app-market-component [(slots)]="market" [hireable]="canHireOrDismiss()" [fame]="currentFame()" (hire)="onHire($event)"/>
+<span>Cards in Market Deck: {{ marketDeck().length }}, Actions left: {{ marketActionsLeft() }}</span>
+<app-market-component [(slots)]="market" [hireable]="canHireOrDismiss()" [fame]="currentFame()"
+                      (hire)="onHire($event)"/>
 <!-- Playing Zone -->
-<span>Cards in Deck: {{deck().length}}, Dismissed: {{dismissed().length}}, Fame: {{currentFame()}}</span>
+<span>Cards in Deck: {{ deck().length }}, Dismissed: {{ dismissed().length }}, Fame: {{ currentFame() }}</span>
 <button (click)="nextPhase()" [disabled]="isWorking()">{{ nextText() }}</button>
 <div class="slots">
   @for (slot of grid(); track $index) {
-    <app-slot-component [slot]="slot" [dismissable]="canHireOrDismiss()" [fame]="currentFame()" [gameData]="gameData()" (dismiss)="onDismiss($event)"></app-slot-component>
+    <app-slot-component [slot]="slot" [dismissable]="canHireOrDismiss()" [fame]="currentFame()" [gameData]="gameData()"
+                        (dismiss)="onDismiss($event)"></app-slot-component>
   }
 </div>
 @if (allowCheats()) {
   <app-cheat-menu-component [game]="this"></app-cheat-menu-component>
 }
-<dialog #promptDialog>
-  <span>{{promptOptions().text}}</span>
-  @for (option of promptOptions().options; track $index) {
-    <button (click)="chooseOption(option)">{{option?.name ?? 'None'}}</button>
-  }
+<dialog class="prompt-dialog" #promptDialog>
+  <div class="container">
+    <div class="text">{{ promptOptions().text }}</div>
+    <div class="selection">
+      @for (option of promptOptions().options; track $index) {
+        <button (click)="chooseOption(option)">{{ option?.name ?? 'None' }}</button>
+      }
+    </div>
+  </div>
 </dialog>
-<dialog #multiPromptDialog>
-  <span>{{promptOptions().text}}</span>
-  <!-- TODO: new line -->
-  @for (option of promptOptions().options; track $index) {
-    <!-- TODO: style checkboxes as toggle buttons -->
-    <input type="checkbox" (change)="toggleOption($index, $any($event.target))">{{option?.name ?? 'None'}}
-  }
-  <!-- TODO: new line -->
-  <button type="button" (click)="chooseOptions()">Submit</button>
+<dialog class="multi-prompt-dialog" #multiPromptDialog>
+  <div class="container">
+    <div class="text">{{ promptOptions().text }}</div>
+    <div class="selection">
+      @for (option of promptOptions().options; track $index) {
+        <div class="checkbox-toggle-button">
+          @let id = `option-${$index}`;
+          <input type="checkbox" [id]="id" [(ngModel)]="multiPromptSelection[$index]">
+          <label [for]="id">{{ option?.name ?? 'None' }}</label>
+        </div>
+      }
+    </div>
+    <button class="submit" type="button" (click)="chooseOptions()">Submit</button>
+  </div>
 </dialog>

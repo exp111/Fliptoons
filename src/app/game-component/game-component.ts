@@ -17,10 +17,11 @@ import { Slot } from '../../model/slot';
 import { CheatMenuComponent } from './cheat-menu-component/cheat-menu-component';
 import { firstValueFrom, Observable, Subject } from 'rxjs';
 import { PromptOptions } from '../../model/prompt';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-game-component',
-  imports: [MarketComponent, SlotComponent, CheatMenuComponent],
+  imports: [MarketComponent, SlotComponent, CheatMenuComponent, FormsModule],
   templateUrl: './game-component.html',
   styleUrl: './game-component.scss',
 })
@@ -83,6 +84,7 @@ export class GameComponent {
     },
     multiPrompt: (options: PromptOptions) => {
       this.promptOptions.set(options);
+      this.multiPromptSelection = new Array(options.options.length).fill(false);
       this.multiPromptDialog().nativeElement.showModal();
       return firstValueFrom(this.multiPromptHold);
     },
@@ -97,12 +99,10 @@ export class GameComponent {
     this.promptHold.next(option);
   }
 
-  toggleOption(index: number, target: HTMLInputElement) {
-    this.multiPromptSelection[index] = target.checked;
-  }
-
   chooseOptions() {
-    let options = this.promptOptions().options.filter((o,i) => o && this.multiPromptSelection[i]) as Card[];
+    let options = this.promptOptions().options.filter(
+      (o, i) => o && this.multiPromptSelection[i],
+    ) as Card[];
     this.multiPromptDialog().nativeElement.close();
     this.multiPromptHold.next(options);
   }
@@ -191,8 +191,8 @@ export class GameComponent {
   }
 
   dismissCardMarket(card: Card) {
-    this.market.update(m => m.filter(c => c !== card));
-    this.marketDiscard.update(d => [...d, card]);
+    this.market.update((m) => m.filter((c) => c !== card));
+    this.marketDiscard.update((d) => [...d, card]);
   }
 
   refillMarket(totalAmount = this.MARKET_SIZE) {
