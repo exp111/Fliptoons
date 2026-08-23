@@ -24,6 +24,7 @@ import { HorseCard } from './cards/horse';
 import { MonkeyCard } from './cards/monkey';
 import { SnakeCard } from './cards/snake';
 import { ElephantCard } from './cards/elephant';
+import { CowCard } from './cards/cow';
 
 export const prices = [3, 4, 7, 10, 15];
 export const cardsSeason1: Card[] = [
@@ -51,7 +52,7 @@ export const cardsSeason1: Card[] = [
   new TigerCard("Tiger", 22, 3, 1, [SpecialAbility.NoDismiss]),
   new DeerCard("Deer", 23, 3, 1),
   new BearCard("Bear", 24, 1, 1),
-  new Card("Cow", 25, 0, 1),
+  new CowCard("Cow", 25, 0, 1),
 ];
 
 export const cardsSeason1Starter: Card[] = [
