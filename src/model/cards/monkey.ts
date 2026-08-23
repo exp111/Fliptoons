@@ -14,6 +14,5 @@ export class MonkeyCard extends Card {
     let newSlot = data.grid[index - GRID_ROW_SIZE];
     curSlot.removeCard(card);
     newSlot.addCard(card);
-    //TODO: adjacency checks
   }
 }

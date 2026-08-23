@@ -68,4 +68,4 @@ export const cardsSeason1Starter: Card[] = [
 export const soloBlacklist = [
   "Skunk",
   "Pig"
-]
+];
