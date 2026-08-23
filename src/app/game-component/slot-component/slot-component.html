@@ -1,6 +1,6 @@
 <div class="slot">
   @for (slot of slot().cards(); track $index) {
-    <span class="fame">{{slot.getFame(gameData())}}</span>
+    <span class="fame" [style.--index]="$index">{{slot.getFame(gameData())}}</span>
     <img [src]="slot.getImg()" [class.facedown]="slot.facedown" [class.clickable]="canGetDismissed(slot.card)" (click)="dismissCard(slot.card)" [style.--index]="$index">
   }
 </div>

@@ -12,6 +12,8 @@ export interface GameData {
   market: Card[];
   grid: Slot[];
   dismissed: Card[];
+  deck: Card[];
+  marketDeck: Card[];
   // methods
   addMarketAction: () => void;
   addFame: (fame: number) => void;
@@ -20,6 +22,8 @@ export interface GameData {
   dismissCard: (card: Card, slot?: Slot) => void;
   dismissCardMarket: (card: Card) => void;
   refillMarket: (totalAmount: number) => void;
+  drawDeck: (amount: number) => Card[];
+  drawMarketDeck: (amount: number) => Card[] | null;
 }
 
 export enum Direction {
@@ -126,4 +130,5 @@ export class Card {
   async onPhaseChange(data: GameData, previous: Phase, next: Phase) {}
 
   async onCardPlayed(data: GameData, card: Card) {}
+  //TODO: onSelfPlayed, onNextCardPlayed
 }

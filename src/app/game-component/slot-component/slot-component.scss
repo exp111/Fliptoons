@@ -8,8 +8,12 @@
   position: relative;
 
   .fame {
+    // fallback value. set through template
+    --index: 0;
+
     position: absolute;
-    z-index: 1;
+    top: calc(var(--index) * #{variables.$stack-offset});
+    z-index: calc(var(--index) + 1);
     padding: 0.25rem;
   }
 

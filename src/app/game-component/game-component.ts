@@ -73,6 +73,8 @@ export class GameComponent {
     grid: this.grid(),
     dismissed: this.dismissed(),
     playedCards: this.playedCards(),
+    deck: this.deck(),
+    marketDeck: this.marketDeck(),
     // methods
     addMarketAction: () => this.marketActionsLeft.update((a) => a + 1),
     addFame: (fame: number) => this.currentFame.update((f) => f + fame),
@@ -91,6 +93,8 @@ export class GameComponent {
     dismissCard: (card: Card, slot?: Slot) => this.dismissCard(card, slot),
     dismissCardMarket: (card: Card) => this.dismissCardMarket(card),
     refillMarket: (totalAmount = this.MARKET_SIZE) => this.refillMarket(totalAmount),
+    drawDeck: (amount) => this.drawCards(this.deck, amount),
+    drawMarketDeck: (amount) => this.drawMarketCards(amount)
   }));
 
   // closes dialog and emits the result to the promise
@@ -195,17 +199,26 @@ export class GameComponent {
     this.marketDiscard.update((d) => [...d, card]);
   }
 
+  // returns null if not enough cards could be drawn
+  drawMarketCards(amount: number) {
+    let cards = this.drawCards(this.marketDeck, amount);
+    // if market deck is empty, game is lost
+    if (cards.length < amount) {
+      this.changePhase(Phase.LOST);
+      return null;
+    }
+    return cards;
+  }
+
   refillMarket(totalAmount = this.MARKET_SIZE) {
     let missingCards = totalAmount - this.market().length;
     if (missingCards == 0) {
       return true;
     }
     // refill
-    let cards = this.drawCards(this.marketDeck, missingCards);
-    // if market deck is empty, game is lost
-    if (cards.length < missingCards) {
-      this.changePhase(Phase.LOST);
-      return false;
+    let cards = this.drawMarketCards(missingCards);
+    if (!cards) {
+      return;
     }
     // add to market + sort
     this.market.update((m) => this.sortByRank([...this.market(), ...cards]));
@@ -322,7 +335,7 @@ export class GameComponent {
     ) {
       return true;
     }
-    return true;
+    return false;
   }
 
   async marketPhase() {
