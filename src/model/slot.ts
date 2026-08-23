@@ -40,12 +40,13 @@ export class Slot {
 
   // Events
   async onCardPlayed(data: GameData, card: Card) {
-    for (const c of this.cards()) {
+    for (let i = 0; i < this.cards().length; i++) {
+      let cardSlot = this.cards()[i];
       // facedown cards probably don't need to get events
-      if (c.facedown) {
+      if (cardSlot.facedown) {
         continue;
       }
-      await c.card.onCardPlayed(data, card);
+      await cardSlot.card.onCardPlayed(data, card);
     }
   }
 
