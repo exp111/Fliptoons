@@ -1,4 +1,5 @@
 import { Card, GameData } from '../card';
+import {GRID_ROW_SIZE} from '../data';
 
 export class MonkeyCard extends Card {
   override async onCardPlayed(data: GameData, card: Card): Promise<void> {
@@ -10,7 +11,7 @@ export class MonkeyCard extends Card {
     }
     let index = card.getSlotIndex(data);
     let curSlot = card.getSlot(data);
-    let newSlot = data.extraRow[index];
+    let newSlot = data.grid[index - GRID_ROW_SIZE];
     curSlot.removeCard(card);
     newSlot.addCard(card);
     //TODO: adjacency checks

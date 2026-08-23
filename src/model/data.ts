@@ -27,6 +27,7 @@ import { ElephantCard } from './cards/elephant';
 import { CowCard } from './cards/cow';
 
 export const GRID_ROW_SIZE = 3;
+export const EXTRA_SLOTS = 3;
 export const marketPrices = [3, 4, 7, 10, 15];
 export const cardsSeason1: Card[] = [
   new OstrichCard("Ostrich", 1, 1, 3),

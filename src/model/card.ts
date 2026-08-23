@@ -1,7 +1,7 @@
 import { Phase } from './phase';
 import { Slot } from './slot';
 import { PromptOptions } from './prompt';
-import {GRID_ROW_SIZE} from './data';
+import { EXTRA_SLOTS, GRID_ROW_SIZE } from './data';
 
 export enum SpecialAbility {
   NoDismiss,
@@ -15,7 +15,6 @@ export interface GameData {
   dismissed: Card[];
   deck: Card[];
   marketDeck: Card[];
-  extraRow: Slot[];
   // methods
   addMarketAction: () => void;
   addFame: (fame: number) => void;
@@ -99,12 +98,12 @@ export class Card {
 
   isInLowerRow(data: GameData) {
     let index = this.getSlotIndex(data);
-    return index >= GRID_ROW_SIZE && index < data.grid.length;
+    return index >= EXTRA_SLOTS + GRID_ROW_SIZE && index < data.grid.length;
   }
 
   isInUpperRow(data: GameData) {
     let index = this.getSlotIndex(data);
-    return index >= 0 && index < GRID_ROW_SIZE;
+    return index >= EXTRA_SLOTS && index < EXTRA_SLOTS + GRID_ROW_SIZE;
   }
 
   isInMiddleRow(data: GameData) {

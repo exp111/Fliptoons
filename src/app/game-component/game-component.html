@@ -7,15 +7,11 @@
 <span>Cards in Deck: {{ deck().length }}, Dismissed: {{ dismissed().length }}, Fame: {{ currentFame() }}</span>
 <button (click)="nextPhase()" [disabled]="isWorking()">{{ nextText() }}</button>
 <div class="slots">
-  @if (extraRowVisible()) {
-    @for (slot of extraRow(); track $index) {
+  @for (slot of grid(); track $index) {
+    @if ($index >= EXTRA_SLOTS || extraRowVisible()) {
       <app-slot-component [slot]="slot" [dismissable]="canHireOrDismiss()" [fame]="currentFame()" [gameData]="gameData()"
                           (dismiss)="onDismiss($event)"></app-slot-component>
     }
-  }
-  @for (slot of grid(); track $index) {
-    <app-slot-component [slot]="slot" [dismissable]="canHireOrDismiss()" [fame]="currentFame()" [gameData]="gameData()"
-                        (dismiss)="onDismiss($event)"></app-slot-component>
   }
 </div>
 @if (allowCheats()) {

@@ -16,6 +16,7 @@ import {
   marketPrices,
   GRID_ROW_SIZE,
   soloBlacklist,
+  EXTRA_SLOTS,
 } from '../../model/data';
 import { shuffleArray } from '../utils';
 import { Phase } from '../../model/phase';
@@ -32,7 +33,7 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './game-component.scss',
 })
 export class GameComponent {
-  AMOUNT_SLOTS = 6;
+  AMOUNT_SLOTS = EXTRA_SLOTS + GRID_ROW_SIZE * 2;
   MARKET_SIZE = 5;
   CARD_DRAW_TIME = 500;
   MARKET_ACTIONS = 2;
@@ -50,8 +51,11 @@ export class GameComponent {
   dismissed = signal<Card[]>([]);
   playedCards = signal<Card[]>([]);
   grid = signal<Slot[]>(this.buildGrid());
-  extraRow = signal<Slot[]>(this.buildGrid(GRID_ROW_SIZE));
-  extraRowVisible = computed(() => this.extraRow().some(r => r.cards().length > 0));
+  extraRowVisible = computed(() =>
+    this.grid()
+      .slice(0, EXTRA_SLOTS - 1)
+      .some((r) => r.cards().length > 0),
+  );
 
   currentFame = signal(0);
   marketActionsLeft = signal(0);
@@ -83,7 +87,6 @@ export class GameComponent {
     playedCards: this.playedCards(),
     deck: this.deck(),
     marketDeck: this.marketDeck(),
-    extraRow: this.extraRow(),
     // methods
     addMarketAction: () => this.marketActionsLeft.update((a) => a + 1),
     addFame: (fame: number) => this.currentFame.update((f) => f + fame),
@@ -124,9 +127,9 @@ export class GameComponent {
     return array.sort((a, b) => a.rank - b.rank);
   }
 
-  private buildGrid(amount = this.AMOUNT_SLOTS) {
+  private buildGrid() {
     let arr = [];
-    for (let i = 0; i < amount; i++) {
+    for (let i = 0; i < this.AMOUNT_SLOTS; i++) {
       arr.push(new Slot());
     }
     return arr;
@@ -294,12 +297,13 @@ export class GameComponent {
     this.isWorking.set(false);
   }
 
-  getNextEmptySlot() {
-    return this.grid().find((s) => s.cards().length == 0);
-  }
-
   shuffle() {
     this.deck.update((d) => shuffleArray(d));
+  }
+
+  getNextEmptySlot() {
+    // only check grid slots (not extra row)
+    return this.grid().slice(EXTRA_SLOTS).find((s) => !s.cards().length);
   }
 
   async flipCards() {
@@ -382,4 +386,5 @@ export class GameComponent {
   }
 
   protected readonly Phase = Phase;
+  protected readonly EXTRA_SLOTS = EXTRA_SLOTS;
 }
