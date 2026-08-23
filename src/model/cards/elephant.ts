@@ -1,10 +1,7 @@
 import { Card, GameData } from '../card';
 
 export class ElephantCard extends Card {
-  override async onCardPlayed(data: GameData, card: Card): Promise<void> {
-    if (card != this) {
-      return;
-    }
+  override async onSelfPlayed(data: GameData) {
     // needs to have a card before
     if (data.playedCards.length < 2) {
       return;

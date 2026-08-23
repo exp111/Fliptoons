@@ -1,10 +1,7 @@
 import { Card, GameData } from '../card';
 
 export class SnakeCard extends Card {
-  override async onCardPlayed(data: GameData, card: Card): Promise<void> {
-    if (card != this) {
-      return;
-    }
+  override async onSelfPlayed(data: GameData) {
     // dismiss top card
     let topCard = data.drawDeck(1);
     if (topCard.length) {
@@ -15,7 +12,7 @@ export class SnakeCard extends Card {
     if (!topMarket) {
       return;
     }
-    let slot = card.getSlot(data);
+    let slot = this.getSlot(data);
     if (!slot) {
       return;
     }

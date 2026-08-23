@@ -1,11 +1,8 @@
 import { Card, GameData } from '../card';
 
 export class OstrichCard extends Card {
-  override async onCardPlayed(data: GameData, card: Card) {
-    // if this card was played before
-    if (data.playedCards[data.playedCards.length - 2] !== this) {
-      return;
-    }
+  // stack next card on self
+  override async onNextCardPlayed(data: GameData, card: Card) {
     let ownSlot = this.getSlot(data);
     let cardSlot = card.getSlot(data);
     if (!ownSlot || !cardSlot) {

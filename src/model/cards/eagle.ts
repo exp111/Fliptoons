@@ -1,11 +1,8 @@
 import { Card, GameData } from '../card';
 
 export class EagleCard extends Card {
-  override async onCardPlayed(data: GameData, card: Card): Promise<void> {
-    // if this card was played before
-    if (data.playedCards[data.playedCards.length - 2] !== this) {
-      return;
-    }
+  // flip next card
+  override async onNextCardPlayed(data: GameData, card: Card) {
     let cardSlot = card.getSlot(data);
     if (!cardSlot) {
       return;

@@ -145,6 +145,16 @@ export class Card {
 
   async onPhaseChange(data: GameData, previous: Phase, next: Phase) {}
 
-  async onCardPlayed(data: GameData, card: Card) {}
-  //TODO: onSelfPlayed, onNextCardPlayed
+  async onCardPlayed(data: GameData, card: Card) {
+    if (card === this) {
+      await this.onSelfPlayed(data);
+    }
+    if (data.playedCards.length > 1 && data.playedCards[data.playedCards.length - 2] === this) {
+      await this.onNextCardPlayed(data, card);
+    }
+  }
+
+  async onSelfPlayed(data: GameData) {}
+
+  async onNextCardPlayed(data: GameData, card: Card) {}
 }

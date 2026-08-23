@@ -1,12 +1,8 @@
 import { Card, GameData } from '../card';
 
 export class RabbitCard extends Card {
-  override async onCardPlayed(data: GameData, card: Card): Promise<void> {
-    // only activate on self
-    if (card != this) {
-      return;
-    }
-    let selfSlot = card.getSlot(data);
+  override async onSelfPlayed(data: GameData) {
+    let selfSlot = this.getSlot(data);
     if (!selfSlot) {
       return;
     }
