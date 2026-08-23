@@ -17,6 +17,7 @@ import {
   GRID_ROW_SIZE,
   soloBlacklist,
   EXTRA_SLOTS,
+  SOLO_CARDS_TO_REMOVE,
 } from '../../model/data';
 import { shuffleArray } from '../utils';
 import { Phase } from '../../model/phase';
@@ -156,8 +157,7 @@ export class GameComponent {
   }
 
   buildMarketDeck() {
-    //TODO: remove N cards for solo
-    return this.buildDeck(cardsSeason1);
+    return this.buildDeck(cardsSeason1).slice(SOLO_CARDS_TO_REMOVE);
   }
 
   drawCards(deck: WritableSignal<Card[]>, amount: number) {

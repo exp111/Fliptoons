@@ -28,7 +28,9 @@ import { CowCard } from './cards/cow';
 
 export const GRID_ROW_SIZE = 3;
 export const EXTRA_SLOTS = 3;
+
 export const marketPrices = [3, 4, 7, 10, 15];
+
 export const cardsSeason1: Card[] = [
   new OstrichCard("Ostrich", 1, 1, 3),
   new EagleCard("Eagle", 2, 4, 2, [SpecialAbility.IgnoreFlip]),
@@ -65,6 +67,7 @@ export const cardsSeason1Starter: Card[] = [
   new DragonflyCard("Dragonfly", 0, 0, 1),
 ];
 
+export const SOLO_CARDS_TO_REMOVE = 20;
 export const soloBlacklist = [
   "Skunk",
   "Pig"
