@@ -26,7 +26,8 @@ import { SnakeCard } from './cards/snake';
 import { ElephantCard } from './cards/elephant';
 import { CowCard } from './cards/cow';
 
-export const prices = [3, 4, 7, 10, 15];
+export const GRID_ROW_SIZE = 3;
+export const marketPrices = [3, 4, 7, 10, 15];
 export const cardsSeason1: Card[] = [
   new OstrichCard("Ostrich", 1, 1, 3),
   new EagleCard("Eagle", 2, 4, 2, [SpecialAbility.IgnoreFlip]),

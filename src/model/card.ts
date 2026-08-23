@@ -1,6 +1,7 @@
 import { Phase } from './phase';
 import { Slot } from './slot';
 import { PromptOptions } from './prompt';
+import {GRID_ROW_SIZE} from './data';
 
 export enum SpecialAbility {
   NoDismiss,
@@ -14,6 +15,7 @@ export interface GameData {
   dismissed: Card[];
   deck: Card[];
   marketDeck: Card[];
+  extraRow: Slot[];
   // methods
   addMarketAction: () => void;
   addFame: (fame: number) => void;
@@ -34,10 +36,9 @@ export enum Direction {
 }
 
 export class Card {
-  GRID_ROW_SIZE = 3;
   DISMISS_COST = 5;
   // left, right, above, below
-  ADJACENT_OFFSETS = [-1, 1, -this.GRID_ROW_SIZE, this.GRID_ROW_SIZE];
+  ADJACENT_OFFSETS = [-1, 1, -GRID_ROW_SIZE, GRID_ROW_SIZE];
 
   name: string;
   // 1-25
@@ -66,48 +67,6 @@ export class Card {
     return new this.constructor(this.name, this.rank, this.fame, this.count, this.specialAbilities);
   }
 
-  getSlotIndex(data: GameData) {
-    let index = data.grid.findIndex((c) => c.cards().some((c) => c.card === this));
-    if (index < 0) {
-      console.error(`Could not find card ${this.name} in grid.`);
-    }
-    return index;
-  }
-
-  getSlot(data: GameData) {
-    let index = this.getSlotIndex(data);
-    return data.grid[index] ?? null;
-  }
-
-  getAdjacentCards(data: GameData, directions = this.ADJACENT_OFFSETS) {
-    let index = this.getSlotIndex(data);
-    if (index < 0) {
-      console.error(`Could not find self (${this.name}) in grid.`);
-      return [];
-    }
-    const column = index % this.GRID_ROW_SIZE;
-    const cards = [];
-    // check each adjacent cards
-    for (let offset of directions) {
-      // skip row edges
-      if (
-        (column == 0 && offset == this.ADJACENT_OFFSETS[Direction.Left]) ||
-        (column == this.GRID_ROW_SIZE - 1 && offset == this.ADJACENT_OFFSETS[Direction.Right])
-      ) {
-        continue;
-      }
-      let i = index + offset;
-      // out of range
-      if (i < 0 || i >= data.grid.length) {
-        continue;
-      }
-      let slot = data.grid[i];
-      // all cards in slot are adjacent
-      cards.push(...slot.cards().map((s) => s.card));
-    }
-    return cards;
-  }
-
   getImg() {
     return `${this.name.toLowerCase()}.png`;
   }
@@ -122,6 +81,64 @@ export class Card {
 
   canGetDismissed() {
     return !this.specialAbilities?.includes(SpecialAbility.NoDismiss);
+  }
+
+  // Helper
+  getSlotIndex(data: GameData) {
+    let index = data.grid.findIndex((c) => c.cards().some((c) => c.card === this));
+    if (index < 0) {
+      console.error(`Could not find card ${this.name} in grid.`);
+    }
+    return index;
+  }
+
+  getSlot(data: GameData) {
+    let index = this.getSlotIndex(data);
+    return data.grid[index] ?? null;
+  }
+
+  isInLowerRow(data: GameData) {
+    let index = this.getSlotIndex(data);
+    return index >= GRID_ROW_SIZE && index < data.grid.length;
+  }
+
+  isInUpperRow(data: GameData) {
+    let index = this.getSlotIndex(data);
+    return index >= 0 && index < GRID_ROW_SIZE;
+  }
+
+  isInMiddleRow(data: GameData) {
+    let index = this.getSlotIndex(data);
+    return index == 1 || index == GRID_ROW_SIZE + 1;
+  }
+
+  getAdjacentCards(data: GameData, directions = this.ADJACENT_OFFSETS) {
+    let index = this.getSlotIndex(data);
+    if (index < 0) {
+      console.error(`Could not find self (${this.name}) in grid.`);
+      return [];
+    }
+    const column = index % GRID_ROW_SIZE;
+    const cards = [];
+    // check each adjacent cards
+    for (let offset of directions) {
+      // skip row edges
+      if (
+        (column == 0 && offset == this.ADJACENT_OFFSETS[Direction.Left]) ||
+        (column == GRID_ROW_SIZE - 1 && offset == this.ADJACENT_OFFSETS[Direction.Right])
+      ) {
+        continue;
+      }
+      let i = index + offset;
+      // out of range
+      if (i < 0 || i >= data.grid.length) {
+        continue;
+      }
+      let slot = data.grid[i];
+      // all cards in slot are adjacent
+      cards.push(...slot.cards().map((s) => s.card));
+    }
+    return cards;
   }
 
   // Events

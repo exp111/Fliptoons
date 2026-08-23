@@ -5,6 +5,14 @@ export class MonkeyCard extends Card {
     if (card != this) {
       return;
     }
-    //TODO: monkey
+    if (!this.isInUpperRow(data)) {
+      return;
+    }
+    let index = card.getSlotIndex(data);
+    let curSlot = card.getSlot(data);
+    let newSlot = data.extraRow[index];
+    curSlot.removeCard(card);
+    newSlot.addCard(card);
+    //TODO: adjacency checks
   }
 }

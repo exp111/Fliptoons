@@ -1,6 +1,6 @@
 import { Component, computed, input, model, output, signal } from '@angular/core';
 import { Card } from '../../../model/card';
-import { prices } from '../../../model/data';
+import { marketPrices } from '../../../model/data';
 
 export interface HireEvent {
   card: Card;
@@ -25,12 +25,12 @@ export class MarketComponent {
     }
     // get card index to fetch price
     let index = this.slots()!.findIndex((c) => c === card);
-    let price = prices[index];
+    let price = marketPrices[index];
     if (price > this.fame()) {
       return;
     }
     this.hire.emit({ card: card, price: price });
   }
 
-  protected readonly prices = prices;
+  protected readonly marketPrices = marketPrices;
 }

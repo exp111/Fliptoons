@@ -1,13 +1,13 @@
 <div class="market">
   <div class="prices">
-    @for (price of prices; track $index) {
-      <span class="price" [class.unavailable]="prices[$index] > this.fame()">{{price}}</span>
+    @for (price of marketPrices; track $index) {
+      <span class="price" [class.unavailable]="marketPrices[$index] > this.fame()">{{price}}</span>
     }
   </div>
   <div class="slots">
     <!-- TODO: use slot comp for cards? -->
     @for (slot of slots(); track $index) {
-      <img [src]="slot.getImg()" [class.clickable]="hireable() && prices[$index] <= this.fame()" (click)="hireCard(slot)">
+      <img [src]="slot.getImg()" [class.clickable]="hireable() && marketPrices[$index] <= this.fame()" (click)="hireCard(slot)">
     }
   </div>
 </div>

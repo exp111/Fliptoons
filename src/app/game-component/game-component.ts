@@ -10,7 +10,13 @@ import {
 import { HireEvent, MarketComponent } from './market-component/market-component';
 import { DismissEvent, SlotComponent } from './slot-component/slot-component';
 import { Card, GameData } from '../../model/card';
-import { cardsSeason1, cardsSeason1Starter, prices, soloBlacklist } from '../../model/data';
+import {
+  cardsSeason1,
+  cardsSeason1Starter,
+  marketPrices,
+  GRID_ROW_SIZE,
+  soloBlacklist,
+} from '../../model/data';
 import { shuffleArray } from '../utils';
 import { Phase } from '../../model/phase';
 import { Slot } from '../../model/slot';
@@ -44,6 +50,8 @@ export class GameComponent {
   dismissed = signal<Card[]>([]);
   playedCards = signal<Card[]>([]);
   grid = signal<Slot[]>(this.buildGrid());
+  extraRow = signal<Slot[]>(this.buildGrid(GRID_ROW_SIZE));
+  extraRowVisible = computed(() => this.extraRow().some(r => r.cards().length > 0));
 
   currentFame = signal(0);
   marketActionsLeft = signal(0);
@@ -75,6 +83,7 @@ export class GameComponent {
     playedCards: this.playedCards(),
     deck: this.deck(),
     marketDeck: this.marketDeck(),
+    extraRow: this.extraRow(),
     // methods
     addMarketAction: () => this.marketActionsLeft.update((a) => a + 1),
     addFame: (fame: number) => this.currentFame.update((f) => f + fame),
@@ -94,7 +103,7 @@ export class GameComponent {
     dismissCardMarket: (card: Card) => this.dismissCardMarket(card),
     refillMarket: (totalAmount = this.MARKET_SIZE) => this.refillMarket(totalAmount),
     drawDeck: (amount) => this.drawCards(this.deck, amount),
-    drawMarketDeck: (amount) => this.drawMarketCards(amount)
+    drawMarketDeck: (amount) => this.drawMarketCards(amount),
   }));
 
   // closes dialog and emits the result to the promise
@@ -115,9 +124,9 @@ export class GameComponent {
     return array.sort((a, b) => a.rank - b.rank);
   }
 
-  private buildGrid() {
+  private buildGrid(amount = this.AMOUNT_SLOTS) {
     let arr = [];
-    for (let i = 0; i < this.AMOUNT_SLOTS; i++) {
+    for (let i = 0; i < amount; i++) {
       arr.push(new Slot());
     }
     return arr;
@@ -326,7 +335,7 @@ export class GameComponent {
       return false;
     }
     // can still buy anything from market?
-    if (this.market().length > 0 && this.currentFame() >= prices[0]) {
+    if (this.market().length > 0 && this.currentFame() >= marketPrices[0]) {
       return true;
     }
     // can still dismiss cards from grid?
